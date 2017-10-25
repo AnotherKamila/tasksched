@@ -25,11 +25,11 @@ const request_handler = (request, response) => {
         case "GET":
             export_tasks(url.parse(request.url, true).query.filter, {
                 on_data: (chunk)    => response.write(chunk),
-                on_exit: (exitcode) => response.end()
+                on_exit: (code,sig) => response.end(sig || code)
             })
             break;
         case "POST":
-            const { on_data, on_end } = import_tasks({on_exit: () => response.end() })
+            const { on_data, on_end } = import_tasks({on_exit: (code,sig) => response.end(sig || code) })
             request.on('data', on_data)
             request.on('end', on_end)
             break;
