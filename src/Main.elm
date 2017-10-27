@@ -3,6 +3,7 @@ module Main exposing (main)
 import Html exposing (..)
 import Http
 import Date exposing (Date)
+import Task
 import Json.Decode as Decode
 import Material
 import Material.Scheme
@@ -12,6 +13,7 @@ import Material.Layout as Layout
 import Taskwarrior
 import Config
 import TaskListViews
+import Utils.Date exposing (date_0)
 
 main = Html.program
     { init = init
@@ -26,8 +28,8 @@ main = Html.program
 type alias Model =
     { tasks    : List Taskwarrior.Task
     , zoomlvl  : Float
+    , now      : Date
     , err      : String
-
     -- Boilerplate
     , mdl      : Material.Model                     -- model for Mdl components
     --, dragDrop : Html5.DragDrop.Model DragId DropId -- model for DragDrop
@@ -39,6 +41,7 @@ type alias Model =
 type Msg = NewTasks (Result Http.Error (List Taskwarrior.Task))
          --| Unschedule Task
          --| Schedule Task Date
+         | NewNow Date
          | Mdl (Material.Msg Msg) -- Boilerplate: internal Mdl messages
 
 
@@ -51,8 +54,9 @@ update msg model =
             ({model | err = toString err }, Cmd.none) -- TODO retry
         --Schedule task date ->
         --Unschedule task ->
-
-        Mdl m -> Material.update Mdl m model -- Boilerplate: Mdl action handler
+        NewNow date -> ({model | now = date}, Cmd.none)
+        -- Boilerplate
+        Mdl m -> Material.update Mdl m model -- Mdl action handler
 
 
 
@@ -62,13 +66,15 @@ subscriptions : Model -> Sub Msg
 subscriptions model = Layout.subs Mdl model.mdl
 
 
--- HTTP
+-- COMMANDS
 
 get_tasks : Cmd Msg
 get_tasks =
     let request = Http.get Config.api_url Taskwarrior.decode_tasks
     in Http.send NewTasks request
 
+get_now : Cmd Msg
+get_now = Task.perform NewNow Date.now
 
 -- VIEW
 
@@ -88,7 +94,7 @@ view model =
 
 view_body : Model -> Html Msg
 view_body model =
-    div [] [TaskListViews.view model.zoomlvl model.tasks, text model.err]
+    div [] [TaskListViews.view model.now model.zoomlvl model.tasks, text model.err]
 
 
 -- INIT
@@ -96,9 +102,11 @@ view_body model =
 model =
     { tasks = []
     , zoomlvl = 1
+    , now = date_0
     , err = ""
-    , mdl = Material.model -- Boilerplate: initial model for Mdl components
+    -- Boilerplate
+    , mdl = Material.model -- initial model for Mdl components
     }
 
 init : (Model, Cmd Msg)
-init = (model, get_tasks)
+init = (model, Cmd.batch [get_now, get_tasks])
