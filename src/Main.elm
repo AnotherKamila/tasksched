@@ -24,9 +24,13 @@ main = Html.program
 -- MODEL
 
 type alias Model =
-    { tasks : List Taskwarrior.Task
-    , err   : String
-    , mdl   : Material.Model -- Boilerplate: model store for Mdl components
+    { tasks    : List Taskwarrior.Task
+    , zoomlvl  : Float
+    , err      : String
+
+    -- Boilerplate
+    , mdl      : Material.Model                     -- model for Mdl components
+    --, dragDrop : Html5.DragDrop.Model DragId DropId -- model for DragDrop
     }
 
 
@@ -84,13 +88,14 @@ view model =
 
 view_body : Model -> Html Msg
 view_body model =
-    div [] [TaskListViews.view model.tasks, text model.err]
+    div [] [TaskListViews.view model.zoomlvl model.tasks, text model.err]
 
 
 -- INIT
 
 model =
     { tasks = []
+    , zoomlvl = 1
     , err = ""
     , mdl = Material.model -- Boilerplate: initial model for Mdl components
     }

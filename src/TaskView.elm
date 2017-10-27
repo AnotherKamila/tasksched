@@ -11,13 +11,13 @@ import Material.Grid exposing (cell, size, Device(All))
 import Material.Options as Options exposing (css)
 
 import Taskwarrior exposing (Task)
-import MyUtils exposing (..)
+import Utils.Maybe exposing (maybe2list, empty2list)
 
 view_task task =
     let options = [Color.text Color.white, css "padding" "0.5em"]
     in Card.view
             [ css "margin" "1em auto"
-            , css "width" "94%"
+            , css "width" "90%"
             , Color.background Color.primary
             , Elevation.e2
             ]
