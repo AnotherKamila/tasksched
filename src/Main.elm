@@ -1,8 +1,17 @@
+module Main exposing (main)
+
 import Html exposing (..)
 import Http
 import Date exposing (Date)
 import Json.Decode as Decode
+import Material
+import Material.Scheme
+import Material.Color as Color
+import Material.Layout as Layout
 
+import Taskwarrior
+import Config
+import TaskListViews
 
 main = Html.program
     { init = init
@@ -12,32 +21,22 @@ main = Html.program
     }
 
 
--- CONSTANTS
-
-api_url = "//localhost:5000"
-
-
 -- MODEL
 
-type alias Task =
-    { description : String
-    , uuid  : String
-    --, sch   : Maybe Date
-    --, due   : Maybe Date
-    --, attrs : Dict String String
-    }
-
 type alias Model =
-    { tasks : List Task
+    { tasks : List Taskwarrior.Task
     , err   : String
+    , mdl   : Material.Model -- Boilerplate: model store for Mdl components
     }
 
 
 -- UPDATE
 
-type Msg = NewTasks (Result Http.Error (List Task))
+type Msg = NewTasks (Result Http.Error (List Taskwarrior.Task))
          --| Unschedule Task
          --| Schedule Task Date
+         | Mdl (Material.Msg Msg) -- Boilerplate: internal Mdl messages
+
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -49,43 +48,52 @@ update msg model =
         --Schedule task date ->
         --Unschedule task ->
 
+        Mdl m -> Material.update Mdl m model -- Boilerplate: Mdl action handler
+
+
 
 -- SUBSCRIPTIONS
 
 subscriptions : Model -> Sub Msg
-subscriptions model = Sub.none
+subscriptions model = Layout.subs Mdl model.mdl
 
 
 -- HTTP
 
 get_tasks : Cmd Msg
 get_tasks =
-    let request = Http.get api_url decode_tasks
+    let request = Http.get Config.api_url Taskwarrior.decode_tasks
     in Http.send NewTasks request
 
-decode_tasks : Decode.Decoder (List Task)
-decode_tasks = Decode.list decode_task
-
-decode_task : Decode.Decoder Task
-decode_task =
-    Decode.map2 Task (Decode.field "description" Decode.string) (Decode.field "uuid" Decode.string)
-    -- TODO check out http://package.elm-lang.org/packages/NoRedInk/elm-decode-pipeline
 
 -- VIEW
 
 view : Model -> Html Msg
 view model =
-    div [] (
-        [h1 [] [text "Tasks"]] ++
-        (List.map viewTask model.tasks) ++
-        [div [] [text model.err]]
-    )
+    Material.Scheme.topWithScheme Color.BlueGrey Color.Red <|
+        Layout.render Mdl
+            model.mdl
+            [ Layout.fixedDrawer
+            ]
+            { header = []
+            , drawer = [text "TODO"]
+            , tabs   = ([],[])
+            , main   = [view_body model]
+            }
 
-viewTask task =
-    div [] [ text task.description ]
+
+view_body : Model -> Html Msg
+view_body model =
+    div [] [TaskListViews.view model.tasks, text model.err]
 
 
 -- INIT
 
+model =
+    { tasks = []
+    , err = ""
+    , mdl = Material.model -- Boilerplate: initial model for Mdl components
+    }
+
 init : (Model, Cmd Msg)
-init = ({tasks = [], err = ""}, get_tasks)
+init = (model, get_tasks)
