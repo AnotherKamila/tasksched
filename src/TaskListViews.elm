@@ -1,10 +1,10 @@
 module TaskListViews exposing (..)
 
 import Date exposing (Date)
-import Date.Extra exposing (Interval(..))
+import Date.Extra as Date
 import List exposing (sortBy, reverse, length, partition, map, head)
-import List.Extra exposing (splitAt, groupWhile)
-import Maybe.Extra exposing (isJust)
+import List.Extra as List
+import Maybe.Extra as Maybe
 import Html exposing (Html, text, div)
 import Material.Grid exposing (grid, cell, size, Device(..))
 import Material.Options as Options exposing (css)
@@ -15,7 +15,7 @@ import Html5.DragDrop as DragDrop
 import Taskwarrior exposing (Task, Uuid)
 import TaskView
 import BucketView
-import Utils.Date  exposing (just_date, zoomlvl2interval, maybedate2cmp, make_buckets, date_0, date_inf)
+import Utils.Date  exposing (just_date, maybedate2cmp, make_buckets, date_0, date_inf)
 import Utils.List  exposing (bucketize_by)
 
 -- TODO this whole thing badly needs refactoring
@@ -25,40 +25,39 @@ type alias DndMsg msg = DragDrop.Msg Task (Maybe Date) -> msg
 type alias MyModel msg =
     { tasks        : List Task
     , now          : Date
-    , zoomlvl      : Float
+    , zoomlvl      : Date.Interval
     , dropped_date : Maybe Date
     , dndMsg       : DndMsg msg
     }
 
 view : MyModel msg -> Html msg
 view model =
-    let (sch, unsch) = partition (.scheduled >> isJust) model.tasks
-        (uns1, uns2) = unsch |> sortBy .urgency |> reverse |> splitAt ((length unsch)//2)
+    let (sch, unsch) = partition (.scheduled >> Maybe.isJust) model.tasks
+        (uns1, uns2) = unsch |> sortBy .urgency |> reverse |> List.splitAt ((length unsch)//2)
         unsch_htmls  = [uns1, uns2] |> map (view_unscheduled model.dndMsg >> List.singleton >> cell [size All 4, css "margin" "0"])
         sch_html     = sch          |> view_scheduled model |> cell [size All 4]
     in grid [css "padding" "0"] (sch_html :: unsch_htmls)
 
 view_scheduled : MyModel msg -> List Task -> List (Html msg)
 view_scheduled model tasks =
-    let interval = zoomlvl2interval model.zoomlvl
-    in tasks
+    tasks
     |> sortBy (.scheduled >> maybedate2cmp)
-    |> buckets model.now interval
-    |> map (BucketView.view model.dndMsg model.dropped_date model.now interval)
+    |> buckets model.now model.zoomlvl
+    |> map (BucketView.view model.dndMsg model.dropped_date model.now model.zoomlvl)
 
 
 in_bucket : (Date,Date) -> Task -> Bool
 in_bucket (b,e) t =
-    case Date.Extra.compare (get_sch t) e of
+    case Date.compare (get_sch t) e of
         LT -> True
         _  -> False
 
 make_buckets now interval =
-    let till = Date.Extra.add interval 147 now
-        bs   = Date.Extra.range interval 1 now till
-    in List.Extra.zip (date_0 :: bs) (bs ++ [date_inf])
+    let till = Date.add interval 147 now
+        bs   = Date.range interval 1 now till
+    in List.zip (date_0 :: bs) (bs ++ [date_inf])
 
-buckets : Date -> Interval -> List Task -> List ((Date, Date), List Task)
+buckets : Date -> Date.Interval -> List Task -> List ((Date, Date), List Task)
 buckets now interval tasks = bucketize_by (in_bucket) (make_buckets now interval) tasks
 
 
