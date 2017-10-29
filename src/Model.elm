@@ -12,7 +12,7 @@ import Utils.Date
 
 type alias Model =
     { tasks    : List Taskwarrior.Task
-    , zoomlvl  : Date.Interval
+    , zoom     : Date.Interval
     , now      : Date.Date
     , err      : String
 
@@ -25,6 +25,7 @@ type alias Model =
 type Msg = NewTasks    (Result Http.Error (List Taskwarrior.Task))
          | SentTasks   (Result Http.Error String)
          | NewNow      Date.Date
+         | NewZoom     Date.Interval
          | DragDropMsg (DragDrop.Msg Dragged DroppedOnto)
          -- Boilerplate
          | Mdl (Material.Msg Msg) -- internal Mdl messages
@@ -32,7 +33,7 @@ type Msg = NewTasks    (Result Http.Error (List Taskwarrior.Task))
 
 -- we will be dragging tasks to dates
 type alias Dragged     = Taskwarrior.Task
-type alias DroppedOnto = Maybe Date.Date
+type alias DroppedOnto = Maybe Date.Date -- Maybe because we can also unschedule
 
 
 -- INIT --
@@ -40,7 +41,7 @@ type alias DroppedOnto = Maybe Date.Date
 init : Model
 init =
     { tasks    = []
-    , zoomlvl  = Date.Day
+    , zoom     = Date.Day
     , now      = Utils.Date.date_0
     , err      = ""
     -- Boilerplate

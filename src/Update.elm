@@ -22,7 +22,7 @@ update msg model =
         NewTasks  (Err err) -> ({model | err   = toString err},       Cmd.none)
         SentTasks (Err err) -> ({model | err   = toString err},       Cmd.none)
         NewNow    date      -> ({model | now   = date},               Cmd.none)
-
+        NewZoom   zoom      -> ({model | zoom  = zoom},               Cmd.none)
         DragDropMsg m -> dropped m model
         Mdl         m -> Material.update Mdl m model -- Mdl action handler
 

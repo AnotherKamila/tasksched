@@ -31,5 +31,5 @@ bucket_header now interval bucket =
     let format_bucket date = if date == date_0 then "overdue" else format_day_or_time now date
         color = if (bucket /= now) && (has_time bucket) then Color.primary else Color.accent
     in Options.div
-        [Typo.caption, Typo.uppercase, Typo.right, Color.text color]
+        [Color.text color, Typo.caption, Typo.uppercase, Typo.right]
         [text (format_bucket bucket)]

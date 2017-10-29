@@ -25,7 +25,7 @@ type alias DndMsg msg = DragDrop.Msg Task (Maybe Date) -> msg
 type alias MyModel msg =
     { tasks        : List Task
     , now          : Date
-    , zoomlvl      : Date.Interval
+    , zoom         : Date.Interval
     , dropped_date : Maybe Date
     , dndMsg       : DndMsg msg
     }
@@ -42,8 +42,8 @@ view_scheduled : MyModel msg -> List Task -> List (Html msg)
 view_scheduled model tasks =
     tasks
     |> sortBy (.scheduled >> maybedate2cmp)
-    |> buckets model.now model.zoomlvl
-    |> map (BucketView.view model.dndMsg model.dropped_date model.now model.zoomlvl)
+    |> buckets model.now model.zoom
+    |> map (BucketView.view model.dndMsg model.dropped_date model.now model.zoom)
 
 
 in_bucket : (Date,Date) -> Task -> Bool
