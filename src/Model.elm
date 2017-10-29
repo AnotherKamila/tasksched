@@ -1,4 +1,4 @@
-module Model exposing (Model, Msg(..))
+module Model exposing (Model, Msg(..), init)
 
 import Date
 import Http
@@ -7,6 +7,7 @@ import Date.Extra     as Date
 import Html5.DragDrop as DragDrop
 
 import Taskwarrior
+import Utils.Date
 
 
 type alias Model =
@@ -32,3 +33,17 @@ type Msg = NewTasks    (Result Http.Error (List Taskwarrior.Task))
 -- we will be dragging tasks to dates
 type alias Dragged     = Taskwarrior.Task
 type alias DroppedOnto = Maybe Date.Date
+
+
+-- INIT --
+
+init : Model
+init =
+    { tasks    = []
+    , zoomlvl  = Date.Day
+    , now      = Utils.Date.date_0
+    , err      = ""
+    -- Boilerplate
+    , dragDrop = DragDrop.init
+    , mdl      = Material.model
+    }

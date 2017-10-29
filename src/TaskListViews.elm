@@ -52,9 +52,11 @@ in_bucket (b,e) t =
         LT -> True
         _  -> False
 
+make_buckets : Date -> Date.Interval -> List (Date,Date)
 make_buckets now interval =
-    let till = Date.add interval 147 now
-        bs   = Date.range interval 1 now till
+    let from = Date.add interval -1  now |> Date.ceiling interval
+        till = Date.add interval 147 now
+        bs   = Date.range interval 1 from till
     in List.zip (date_0 :: bs) (bs ++ [date_inf])
 
 buckets : Date -> Date.Interval -> List Task -> List ((Date, Date), List Task)

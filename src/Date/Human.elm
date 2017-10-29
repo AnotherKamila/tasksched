@@ -1,11 +1,11 @@
 module Date.Human exposing (..)
 
-import Date        exposing (..)
-import Date.Extra  exposing (..)
+import Date               exposing (..)
+import Date.Extra as Date exposing (..)
 
 is_past : Date -> Date -> Bool
 is_past now date =
-    case Date.Extra.compare date now of
+    case Date.compare date now of
         LT -> True
         _  -> False
 
@@ -17,10 +17,12 @@ has_time date =
 
 format_day : Date -> Date -> String
 format_day now date =
-    case diff Day now date of
-        (-1) -> "today"
-        0    -> "tomorrow"
-        (-2) -> "yesterday"
+    let fnow  = Date.floor Day now
+        fdate = Date.floor Day date
+    in case diff Day fnow fdate of
+        (-1) -> "yesterday"
+        0    -> "today"
+        1    -> "tomorrow"
         n    -> toFormattedString (if 0 < n && n < 7 then "EEEE" else "MMMM d") date
 
 format_hour : Date -> Date -> String

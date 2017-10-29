@@ -28,7 +28,7 @@ view dndMsg active_drop now interval ((b, e), tasks) =
 
 bucket_header : Date -> Interval -> Date -> Html msg
 bucket_header now interval bucket =
-    let format_bucket date = if date == date_0 then "now" else format_day_or_time now date
+    let format_bucket date = if date == date_0 then "overdue" else format_day_or_time now date
         color = if (bucket /= now) && (has_time bucket) then Color.primary else Color.accent
     in Options.div
         [Typo.caption, Typo.uppercase, Typo.right, Color.text color]
