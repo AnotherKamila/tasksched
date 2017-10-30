@@ -41,7 +41,7 @@ view model =
 view_scheduled : MyModel msg -> List Task -> List (Html msg)
 view_scheduled model tasks =
     tasks
-    |> sortBy (.scheduled >> maybedate2cmp)
+    |> sortBy (\t -> (t.scheduled |> maybedate2cmp, t.urgency))
     |> buckets model.now model.zoom
     |> map (BucketView.view model.dndMsg model.dropped_date model.now model.zoom)
 

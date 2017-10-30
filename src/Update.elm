@@ -17,12 +17,13 @@ update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
     case msg of
         -- TODO handle errors :D like, everywhere :D
-        NewTasks  (Ok new)  -> ({model | tasks = model.tasks ++ new}, Cmd.none)
-        SentTasks (Ok msg)  -> ({model | err   = msg},                Cmd.none)
-        NewTasks  (Err err) -> ({model | err   = toString err},       Cmd.none)
-        SentTasks (Err err) -> ({model | err   = toString err},       Cmd.none)
-        NewNow    date      -> ({model | now   = date},               Cmd.none)
-        NewZoom   zoom      -> ({model | zoom  = zoom},               Cmd.none)
+        NewTasks  (Ok new)  -> ({model | tasks = new},          Cmd.none)
+        SentTasks (Ok msg)  -> ({model | err   = msg},          Cmd.none)
+        NewTasks  (Err err) -> ({model | err   = toString err}, Cmd.none)
+        SentTasks (Err err) -> ({model | err   = toString err}, Cmd.none)
+        NewNow    date      -> ({model | now   = date},         Cmd.none)
+        NewZoom   zoom      -> ({model | zoom  = zoom},         Cmd.none)
+        RefreshWanted       -> (model,                          refresh )
         DragDropMsg m -> dropped m model
         Mdl         m -> Material.update Mdl m model -- Mdl action handler
 
@@ -51,8 +52,10 @@ send_task t = Http.send SentTasks (Taskwarrior.Api.send_request t)
 get_now : Cmd Msg
 get_now = Task.perform NewNow Date.now
 
+refresh : Cmd Msg
+refresh = Cmd.batch [get_now, get_tasks]
 
 -- INIT --
 
 init : Cmd Msg
-init = Cmd.batch [get_now, get_tasks]
+init = refresh

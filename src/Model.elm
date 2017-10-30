@@ -22,11 +22,12 @@ type alias Model =
     }
 
 
-type Msg = NewTasks    (Result Http.Error (List Taskwarrior.Task))
-         | SentTasks   (Result Http.Error String)
-         | NewNow      Date.Date
-         | NewZoom     Date.Interval
-         | DragDropMsg (DragDrop.Msg Dragged DroppedOnto)
+type Msg = NewTasks      (Result Http.Error (List Taskwarrior.Task))
+         | SentTasks     (Result Http.Error String)
+         | NewNow        Date.Date
+         | NewZoom       Date.Interval
+         | RefreshWanted
+         | DragDropMsg   (DragDrop.Msg Dragged DroppedOnto)
          -- Boilerplate
          | Mdl (Material.Msg Msg) -- internal Mdl messages
 
