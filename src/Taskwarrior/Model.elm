@@ -1,4 +1,4 @@
-module Taskwarrior exposing (Uuid, Task)
+module Taskwarrior.Model exposing (Uuid, Task)
 
 import Date
 

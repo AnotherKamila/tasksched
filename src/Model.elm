@@ -6,7 +6,7 @@ import Material
 import Date.Extra     as Date
 import Html5.DragDrop as DragDrop
 
-import Taskwarrior
+import Taskwarrior.Model as Taskwarrior
 import Utils.Date
 
 

@@ -12,7 +12,7 @@ import Material.Elevation as Elevation
 import Material.Color as Color
 import Html5.DragDrop as DragDrop
 
-import Taskwarrior exposing (Task, Uuid)
+import Taskwarrior.Model exposing (Task, Uuid)
 import TaskView
 import BucketView
 import Utils.Date  exposing (just_date, maybedate2cmp, make_buckets, date_0, date_inf)

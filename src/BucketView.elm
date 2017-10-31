@@ -8,10 +8,10 @@ import Material.Color as Color
 import Material.Options as Options exposing (css)
 import Material.Typography as Typo
 
-import Taskwarrior exposing (Task, Uuid)
-import Date.Human  exposing (format_day_or_time, has_time)
+import Taskwarrior.Model exposing (Task, Uuid)
+import Date.Human        exposing (format_day_or_time, has_time)
 import TaskView
-import Utils.Date  exposing (date_0)
+import Utils.Date        exposing (date_0)
 
 -- TODO refactor: buckets shouldn't know about Task, it should just be a container for more Html
 

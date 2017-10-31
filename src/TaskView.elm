@@ -10,7 +10,7 @@ import Material.Elevation as Elevation
 import Material.Color as Color
 import Material.Options as Options exposing (css)
 
-import Taskwarrior exposing (Task, Uuid)
+import Taskwarrior.Model exposing (Task, Uuid)
 import Utils.String exposing (emptyToList)
 
 view : (DragDrop.Msg Task (Maybe Date) -> m) -> Task -> Html m

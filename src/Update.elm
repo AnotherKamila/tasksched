@@ -9,7 +9,7 @@ import Html5.DragDrop as DragDrop
 
 import Model exposing (Model, Msg(..))
 import Utils.Date
-import Taskwarrior
+import Taskwarrior.Model as Taskwarrior
 import Taskwarrior.Api
 
 

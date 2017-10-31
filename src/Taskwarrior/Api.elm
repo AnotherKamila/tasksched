@@ -10,7 +10,7 @@ import Json.Encode.Extra    as Encode
 import Config
 import Utils.Json.Decode    as Decode
 import Utils.Json.Encode    as Encode
-import Taskwarrior exposing (Task)
+import Taskwarrior.Model exposing (Task)
 
 decode_task : Decode.Decoder Task
 decode_task =
