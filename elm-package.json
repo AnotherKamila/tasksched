@@ -1,6 +1,7 @@
 {
     "version": "1.0.0",
     "summary": "Taskwarrior Web UI for efficient task scheduling",
+    "author": "Kamila Součková <kamila@ksp.sk>",
     "repository": "https://github.com/AnotherKamila/tasksched.git",
     "license": "MIT",
     "source-directories": [
