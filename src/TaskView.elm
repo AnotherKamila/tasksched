@@ -27,11 +27,11 @@ view dndMsg task =
             ] )
     |> div (DragDrop.draggable dndMsg task) << List.singleton
 
-
+fmtdate : Date -> String
 fmtdate = Date.toFormattedString "MMM d"
 
+task_details : Task -> String
 task_details t =
-    let due  = Maybe.map (\x -> "due " ++ fmtdate x) t.due       |> Maybe.toList
-        sch  = Maybe.map (\x -> "sch " ++ fmtdate x) t.scheduled |> Maybe.toList
+    let due  = Maybe.map (\x -> "due " ++ fmtdate x) t.due |> Maybe.toList
         proj = t.project |> emptyToList
-    in due ++ sch ++ proj |> String.join " • "
+    in due ++ proj |> String.join " • "

@@ -9,8 +9,10 @@ date_0 = Date.Extra.fromCalendarDate 1970 Jan 1
 date_inf : Date
 date_inf = Date.Extra.fromCalendarDate 2038 Jan 1 -- TODO update by 2038 ;-)
 
+just_date : Maybe Date -> Date
 just_date = Maybe.withDefault date_0
 
+maybedate2cmp : Maybe Date -> Float
 maybedate2cmp = Maybe.map Date.toTime >> Maybe.withDefault 0
 
 -- Contract: requires zoomlvl > 0!

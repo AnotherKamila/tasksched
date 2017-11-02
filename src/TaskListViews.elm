@@ -8,8 +8,6 @@ import Maybe.Extra as Maybe
 import Html exposing (Html, text, div)
 import Material.Grid exposing (grid, cell, size, Device(..))
 import Material.Options as Options exposing (css)
-import Material.Elevation as Elevation
-import Material.Color as Color
 import Html5.DragDrop as DragDrop
 
 import Taskwarrior.Model exposing (Task, Uuid)
@@ -48,7 +46,7 @@ view_scheduled model tasks =
 
 in_bucket : (Date,Date) -> Task -> Bool
 in_bucket (b,e) t =
-    case Date.compare (get_sch t) e of
+    case Date.compare (t.scheduled |> just_date) e of
         LT -> True
         _  -> False
 
@@ -61,10 +59,6 @@ make_buckets now interval =
 
 buckets : Date -> Date.Interval -> List Task -> List ((Date, Date), List Task)
 buckets now interval tasks = bucketize_by (in_bucket) (make_buckets now interval) tasks
-
-
-get_sch = .scheduled >> just_date
-
 
 view_unscheduled : DndMsg msg -> List Task -> Html msg
 view_unscheduled dndMsg = map (TaskView.view dndMsg) >> div (DragDrop.droppable dndMsg Nothing)

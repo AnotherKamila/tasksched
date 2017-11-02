@@ -1,6 +1,5 @@
 module View exposing (view)
 
-import Date
 import Material.Layout
 import Material.Scheme
 import Date.Extra       as Date

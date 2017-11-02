@@ -29,6 +29,7 @@ format_hour : Date -> Date -> String
 format_hour now date =
     if diff Minute now date < 5 then "now" else toFormattedString "h a" date
 
+format_month : Date -> Date -> String
 format_month _ = toFormattedString "MMMM"
 
 format : Interval -> Date -> Date -> String

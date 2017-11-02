@@ -1,6 +1,5 @@
 module Taskwarrior.Api exposing (decode_task, decode_tasks, encode_task, get_request, send_request)
 
-import Result
 import Http
 import Json.Decode          as Decode
 import Json.Decode.Pipeline as Decode
@@ -31,7 +30,10 @@ encode_task t = Encode.object [ ("uuid",      Encode.string                    t
                               , ("scheduled", Encode.maybe Encode.date_iso_utc t.scheduled)
                               ]
 
-get_request    = Http.get  Config.api_url decode_tasks
+get_request : Http.Request (List Task)
+get_request = Http.get Config.api_url decode_tasks
+
+send_request : Task -> Http.Request String
 send_request t = Http.post Config.api_url
                     (Http.stringBody "application/json" <| Encode.encode 0 <| encode_task t)
                     (Decode.field "status" Decode.string)

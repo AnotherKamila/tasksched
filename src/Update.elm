@@ -1,14 +1,12 @@
 module Update exposing (update, init)
 
 import Date
-import Date.Extra as Date
 import Material
 import Task
 import Http
 import Html5.DragDrop as DragDrop
 
 import Model exposing (Model, Msg(..))
-import Utils.Date
 import Taskwarrior.Model as Taskwarrior
 import Taskwarrior.Api
 
@@ -37,6 +35,7 @@ dropped msg model =
 
 
 -- TODO move this from here, maybe?
+schedule_task : List Taskwarrior.Task -> Taskwarrior.Task -> Maybe Date.Date -> List Taskwarrior.Task
 schedule_task tasks t date =
     {t | scheduled = date} :: (List.filter ((/=) t) tasks)
 

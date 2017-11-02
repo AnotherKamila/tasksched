@@ -13,8 +13,7 @@ import Date.Human        exposing (format_day_or_time, has_time)
 import TaskView
 import Utils.Date        exposing (date_0)
 
--- TODO refactor: buckets shouldn't know about Task, it should just be a container for more Html
-
+-- TODO maybe refactor: buckets shouldn't know about Task, it should just be a container for more Html
 view : (DragDrop.Msg Task (Maybe Date) -> m) -> Maybe Date -> Date -> Interval -> ((Date,Date), List Task) -> Html m
 view dndMsg active_drop now interval ((b, e), tasks) =
     let highlight =
