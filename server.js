@@ -7,7 +7,7 @@ const {spawn} = require('child_process');
 const PORT = 5000
 // const ALLOW_CORS = '*'
 const ALLOW_CORS = 'http://localhost:8000'
-const ALWAYS_FILTER='+PENDING'
+const ALWAYS_FILTER='(+PENDING or (+WAITING +SCHEDULED))'
 
 const export_tasks = (filter, {on_data, on_exit}) => {
     const f = `${ALWAYS_FILTER} ${filter || ''}`
