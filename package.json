@@ -1,0 +1,11 @@
+{
+  "name": "tasksched",
+  "version": "1.0.0",
+  "description": "Taskwarrior Web UI for efficient task scheduling",
+  "author": "Kamila Součková <kamila@ksp.sk>",
+  "license": "MIT",
+  "repository": "https://github.com/AnotherKamila/tasksched.git",
+  "dependencies": {
+    "elm": "0.18.*"
+  }
+}
