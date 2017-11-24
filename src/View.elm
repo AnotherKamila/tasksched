@@ -1,10 +1,12 @@
 module View exposing (view)
 
+import Material.Button
 import Material.Layout
 import Material.Scheme
 import Date.Extra       as Date
 import Maybe.Extra      as Maybe
 import Material.Color   as Color
+import Material.Icon    as Icon
 import Html5.DragDrop   as DragDrop
 import Html             exposing (Html, text)
 import Material.Options exposing (cs, css, div, onClick)
@@ -47,11 +49,23 @@ view_body model =
 -- HEADER --
 
 header model =
-    [ Material.Layout.row []
-        [ Material.Layout.title [] [Html.text ("Tasks by " ++ zoom_name model.zoom)]
-        ]
+    [ Material.Layout.row [] (
+            [ Material.Layout.title [] [Html.text ("Tasks by " ++ zoom_name model.zoom)]
+            , Material.Layout.spacer
+            ] ++ (rightbuttons model)
+        )
     ]
 
+rightbuttons model =
+    [ Material.Button.render Mdl [1,0] model.mdl
+        [ Material.Options.onClick RefreshWanted, Material.Button.icon ]
+        [ Icon.i "refresh" ]
+    ]
+
+--menu model = Material.Menu.render Mdl [1,0] model.mdl
+--    [ Material.Menu.bottomRight ]
+--    [ Material.Menu.item [ Material.Menu.onSelect RefreshWanted ] [ Html.text "Refresh tasks" ]
+--    ]
 
 -- DRAWER --
 
