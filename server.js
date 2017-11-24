@@ -6,12 +6,14 @@ const {spawn} = require('child_process');
 
 const PORT = 5000
 // const ALLOW_CORS = '*'
-const ALLOW_CORS = 'http://localhost:8000'
-const ALWAYS_FILTER='(+PENDING or (+WAITING +SCHEDULED))'
+const ALLOW_CORS    = 'http://localhost:8000'
+const ALWAYS_FILTER = '(+PENDING or (+WAITING +SCHEDULED))'
+const TASK          = 'task'
+const TASKOPTS      = ['rc.gc=off']
 
 const export_tasks = (filter, {on_data, on_exit}) => {
     const f = `${ALWAYS_FILTER} ${filter || ''}`
-    const tw = spawn('task', [f, 'export', 'rc.json.array=on'])
+    const tw = spawn(TASK, TASKOPTS.concat(['rc.json.array=on', f, 'export']))
     tw.stdout.on('data', on_data)
     tw.on('exit', on_exit)
 }
@@ -25,7 +27,7 @@ const import_task = ({on_exit}) => {
         if (!task.uuid || task.uuid.length != 36) return on_exit(0, "UUID not present or invalid")
         const cmd = [task.uuid, 'mod']
         for (var attr in task) if (task.hasOwnProperty(attr) && attr != 'uuid') cmd.push(attr+':'+(task[attr] || ''))
-        const tw = spawn('task', cmd)
+        const tw = spawn(TASK, TASKOPTS.concat(cmd))
         console.log("[import] running command: task " + cmd.join(' '))
         tw.on('exit', on_exit)
     }
