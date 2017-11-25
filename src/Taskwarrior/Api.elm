@@ -1,4 +1,4 @@
-module Taskwarrior.Api exposing (decode_task, decode_tasks, encode_task, get_request, send_request)
+module Taskwarrior.Api exposing (decode_task, decode_tasks, encode_task, get_request, send_request, send_done_request)
 
 import Http
 import Json.Decode          as Decode
@@ -36,4 +36,9 @@ get_request = Http.get Config.api_url decode_tasks
 send_request : Task -> Http.Request String
 send_request t = Http.post Config.api_url
                     (Http.stringBody "application/json" <| Encode.encode 0 <| encode_task t)
+                    (Decode.field "status" Decode.string)
+
+send_done_request : Task -> Http.Request String
+send_done_request t = Http.post Config.api_url
+                    (Http.stringBody "application/json" ("{\"uuid\": \""++t.uuid++"\",\"done\":true}"))
                     (Decode.field "status" Decode.string)

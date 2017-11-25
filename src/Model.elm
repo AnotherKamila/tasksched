@@ -29,6 +29,7 @@ type Msg = NewTasks      (Result Http.Error (List Taskwarrior.Task))
          | NewZoom       Date.Interval
          | RefreshWanted
          | NewUrl        Navigation.Location
+         | MarkDone      Taskwarrior.Task
          | DragDropMsg   (DragDrop.Msg Dragged DroppedOnto)
          -- Boilerplate
          | Mdl (Material.Msg Msg) -- internal Mdl messages

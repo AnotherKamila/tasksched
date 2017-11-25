@@ -38,7 +38,7 @@ header model =
 view_next : Model -> List (Html Msg)
 view_next model =
     case Taskwarrior.next model.tasks of
-        Nothing -> [ text "No next task" ]
+        Nothing -> [ text "No next task." ]
         Just t  -> [ pretty_task model t |> Options.div [Options.cs "next-task"] ]
 
 pretty_task : Model -> Taskwarrior.Task -> List (Html Msg)
@@ -46,6 +46,6 @@ pretty_task model t =
     [ text t.project
     , Html.h2 [] [text t.description]
     , Button.render Mdl [10,1] model.mdl
-        [ Button.fab, Button.ripple, Button.colored ] -- TODO handle onClick
+        [ Button.fab, Button.ripple, Button.colored, Options.onClick (MarkDone t) ] -- TODO handle onClick
         [ Icon.i "done" ]
     ]
