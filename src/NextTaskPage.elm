@@ -21,7 +21,7 @@ view model =
         { header = [header model]
         , drawer = []
         , tabs   = ([],[])
-        , main   = view_next model.tasks
+        , main   = view_next model
         }
     ] |> Options.div [Options.cs "daily-photo"]
 
@@ -30,13 +30,22 @@ header model =
     [ Layout.spacer
     , Button.render Mdl [10,0] model.mdl
         [ Button.link "#", Button.icon ]
-        [ Icon.i "close" ]
+        [ Icon.i "list" ]
     ]
     |> Layout.row [Options.css "opacity" "0.2"]
 
 
-view_next : List Taskwarrior.Task -> List (Html Msg)
-view_next tasks =
-    case Taskwarrior.next tasks of
-        Nothing -> [text "No next task"]
-        Just t  -> [text (t.description)]
+view_next : Model -> List (Html Msg)
+view_next model =
+    case Taskwarrior.next model.tasks of
+        Nothing -> [ text "No next task" ]
+        Just t  -> [ pretty_task model t |> Options.div [Options.cs "next-task"] ]
+
+pretty_task : Model -> Taskwarrior.Task -> List (Html Msg)
+pretty_task model t =
+    [ text t.project
+    , Html.h2 [] [text t.description]
+    , Button.render Mdl [10,1] model.mdl
+        [ Button.fab, Button.ripple, Button.colored ] -- TODO handle onClick
+        [ Icon.i "done" ]
+    ]
