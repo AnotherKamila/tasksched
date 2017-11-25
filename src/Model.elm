@@ -3,6 +3,7 @@ module Model exposing (Model, Msg(..), init)
 import Date
 import Http
 import Material
+import Navigation
 import Date.Extra     as Date
 import Html5.DragDrop as DragDrop
 
@@ -15,7 +16,7 @@ type alias Model =
     , zoom     : Date.Interval
     , now      : Date.Date
     , err      : String
-
+    , url      : Navigation.Location
     -- Boilerplate
     , dragDrop : DragDrop.Model Dragged DroppedOnto
     , mdl      : Material.Model -- for Mdl components
@@ -27,6 +28,7 @@ type Msg = NewTasks      (Result Http.Error (List Taskwarrior.Task))
          | NewNow        Date.Date
          | NewZoom       Date.Interval
          | RefreshWanted
+         | NewUrl        Navigation.Location
          | DragDropMsg   (DragDrop.Msg Dragged DroppedOnto)
          -- Boilerplate
          | Mdl (Material.Msg Msg) -- internal Mdl messages
@@ -39,12 +41,13 @@ type alias DroppedOnto = Maybe Date.Date -- Maybe because we can also unschedule
 
 -- INIT --
 
-init : Model
-init =
+init : Navigation.Location -> Model
+init location =
     { tasks    = []
     , zoom     = Date.Day
     , now      = Utils.Date.date_0
     , err      = ""
+    , url      = location
     -- Boilerplate
     , dragDrop = DragDrop.init
     , mdl      = Material.model

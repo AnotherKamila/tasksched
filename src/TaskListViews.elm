@@ -1,27 +1,27 @@
 module TaskListViews exposing (..)
 
-import Date exposing (Date)
-import Date.Extra as Date
-import List exposing (sortBy, reverse, length, partition, map, head)
-import List.Extra as List
-import Maybe.Extra as Maybe
-import Html exposing (Html, text, div)
-import Material.Grid exposing (grid, cell, size, Device(..))
-import Material.Options as Options exposing (css)
-import Html5.DragDrop as DragDrop
-
-import Taskwarrior.Model exposing (Task, Uuid)
-import TaskView
 import BucketView
-import Utils.Date  exposing (just_date, maybedate2cmp, make_buckets, date_0, date_inf)
-import Utils.List  exposing (bucketize_by)
+import TaskView
+import Date.Extra        as Date
+import List.Extra        as List
+import Maybe.Extra       as Maybe
+import Html5.DragDrop    as DragDrop
+import Taskwarrior.Utils as Taskwarrior
+import Taskwarrior.Model as Taskwarrior
+import Material.Options  as Options exposing (css)
+import Date          exposing (Date)
+import List          exposing (sortBy, reverse, length, partition, map, head)
+import Html          exposing (Html, text, div)
+import Material.Grid exposing (grid, cell, size, Device(..))
+import Utils.Date    exposing (just_date, maybedate2cmp, make_buckets, date_0, date_inf)
+import Utils.List    exposing (bucketize_by)
 
 -- TODO this whole thing badly needs refactoring
 
-type alias DndMsg msg = DragDrop.Msg Task (Maybe Date) -> msg
+type alias DndMsg msg = DragDrop.Msg Taskwarrior.Task (Maybe Date) -> msg
 
 type alias MyModel msg =
-    { tasks        : List Task
+    { tasks        : List Taskwarrior.Task
     , now          : Date
     , zoom         : Date.Interval
     , dropped_date : Maybe Date
@@ -30,21 +30,21 @@ type alias MyModel msg =
 
 view : MyModel msg -> Html msg
 view model =
-    let (sch, unsch) = partition (.scheduled >> Maybe.isJust) model.tasks
+    let (sch, unsch) = Taskwarrior.partition_scheduled model.tasks
         (uns1, uns2) = unsch |> sortBy .urgency |> reverse |> List.splitAt ((length unsch)//2)
         unsch_htmls  = [uns1, uns2] |> map (view_unscheduled model.dndMsg >> List.singleton >> cell [size All 4, css "margin" "0"])
         sch_html     = sch          |> view_scheduled model |> cell [size All 4]
     in grid [css "padding" "0"] (sch_html :: unsch_htmls)
 
-view_scheduled : MyModel msg -> List Task -> List (Html msg)
+view_scheduled : MyModel msg -> List Taskwarrior.Task -> List (Html msg)
 view_scheduled model tasks =
     tasks
-    |> sortBy (\t -> (t.scheduled |> maybedate2cmp, t.urgency))
+    |> Taskwarrior.sort_by_scheduled
     |> buckets model.now model.zoom
     |> map (BucketView.view model.dndMsg model.dropped_date model.now model.zoom)
 
 
-in_bucket : (Date,Date) -> Task -> Bool
+in_bucket : (Date,Date) -> Taskwarrior.Task -> Bool
 in_bucket (b,e) t =
     case Date.compare (t.scheduled |> just_date) e of
         LT -> True
@@ -57,8 +57,8 @@ make_buckets now interval =
         bs   = Date.range interval 1 from till
     in List.zip (date_0 :: bs) (bs ++ [date_inf])
 
-buckets : Date -> Date.Interval -> List Task -> List ((Date, Date), List Task)
+buckets : Date -> Date.Interval -> List Taskwarrior.Task -> List ((Date, Date), List Taskwarrior.Task)
 buckets now interval tasks = bucketize_by (in_bucket) (make_buckets now interval) tasks
 
-view_unscheduled : DndMsg msg -> List Task -> Html msg
+view_unscheduled : DndMsg msg -> List Taskwarrior.Task -> Html msg
 view_unscheduled dndMsg = map (TaskView.view dndMsg) >> div (DragDrop.droppable dndMsg Nothing)

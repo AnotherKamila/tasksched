@@ -9,26 +9,25 @@ import Material.Color   as Color
 import Material.Icon    as Icon
 import Html5.DragDrop   as DragDrop
 import Html             exposing (Html, text)
+import Html.Attributes  as Html
 import Material.Options exposing (cs, css, div, onClick)
 
 import Model exposing (Model, Msg(..))
+import NextTaskPage
 import TaskListViews
 
 view : Model -> Html.Html Msg
 view model =
-    Material.Scheme.topWithScheme Color.BlueGrey Color.Red <|
+    let layout = if model.url.hash == "#next" then NextTaskPage.view model else
         Material.Layout.render Mdl
             model.mdl
-            [ Material.Layout.fixedDrawer
-            --, Material.Layout.transparentHeader
-            , Material.Layout.fixedHeader
-            ]
+            [ Material.Layout.fixedDrawer, Material.Layout.fixedHeader ]
             { header = header model
             , drawer = drawer model
             , tabs   = ([],[])
             , main   = [view_body model]
             }
-
+    in layout |> Material.Scheme.topWithScheme Color.BlueGrey Color.Red
 
 -- BODY --
 
@@ -74,18 +73,19 @@ zooms = [Date.Hour, Date.Day, Date.Week, Date.Month] -- The zoom selection menu
 drawer model =
     let zoom_is_active z = if model.zoom == z then active else [Material.Options.nop]
         zoomlink z       = mlink (NewZoom z) (zoom_name z) (zoom_is_active z)
-        zooms_nav = zooms |> List.map zoomlink
+        zooms_nav        = zooms |> List.map zoomlink
+        bottom           = [ Material.Layout.link [ Material.Layout.href "#next" ] [ text "Next task page" ] ]
     in
         [ Material.Layout.title [] [text "Tasks"]
         , divider [css "margin" "-1px 0"] []
         , Material.Layout.navigation []
-            zooms_nav
+            (zooms_nav ++ [Material.Layout.spacer, divider [] []] ++ bottom)
         ]
 
 
 -- HELPERS --
 
-mlink msg txt o = Material.Layout.link (onClick msg :: o) [text txt]
+mlink msg txt opts = Material.Layout.link (onClick msg :: opts) [text txt]
 active = [cs "is-active", Color.text Color.accent, css "font-weight" "bold"] -- TODO put CSS into CSS
 zoom_name z = toString z ++ "s"
 divider opts = Material.Options.styled Html.hr (css "border-color" "#ddd" :: opts)
