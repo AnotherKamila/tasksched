@@ -25,8 +25,13 @@ const import_task = ({on_exit}) => {
     const do_it = () => {
         const task = JSON.parse(in_buf)
         if (!task.uuid || task.uuid.length != 36) return on_exit(0, "UUID not present or invalid")
-        const cmd = [task.uuid, 'mod']
-        for (var attr in task) if (task.hasOwnProperty(attr) && attr != 'uuid') cmd.push(attr+':'+(task[attr] || ''))
+        let cmd = []
+        if (task.done) {
+            cmd = [task.uuid, 'done']
+        } else {
+            cmd = [task.uuid, 'mod']
+            for (var attr in task) if (task.hasOwnProperty(attr) && attr != 'uuid') cmd.push(attr+':'+(task[attr] || ''))
+        }
         const tw = spawn(TASK, TASKOPTS.concat(cmd))
         console.log("[import] running command: task " + cmd.join(' '))
         tw.on('exit', on_exit)
