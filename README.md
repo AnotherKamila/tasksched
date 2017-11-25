@@ -18,6 +18,8 @@ It does not communicate with taskserver as AFAIK there is no standardized HTTP A
 
 # How to use
 
+Requires `node` and `npm`.
+
 `make run` will install dependencies, build the app and run the server. Make sure that the `task` CLI is set up.
 
 ## How to get the best Chrome new tab page ever
