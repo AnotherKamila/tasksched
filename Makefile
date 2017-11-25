@@ -13,16 +13,13 @@ default: help
 
 build: $(OUTJS)  ## Compiles the app.
 
-run: $(OUTJS) server.js  ## Runs the server
+run: $(OUTJS) server.js  ## Runs the server.
 	./server.js
 
 # -- DEV TARGETS -- #
 
-live:  ## Runs an elm-live server for development
+live:  ## Runs an elm-live server for development. Proxied at /dev.
 	$(ELM_LIVE) $(MAIN) --output $(OUTJS)        -- $(ELMFLAGS)
-
-open:  ## Runs a dev server and opens the app in the browser
-	$(ELM_LIVE) $(MAIN) --output $(OUTJS) --open -- $(ELMFLAGS)
 
 # -- THE TARGETS THAT ACTUALLY DO STUFF -- #
 

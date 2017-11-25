@@ -6,6 +6,9 @@
   "license": "MIT",
   "repository": "https://github.com/AnotherKamila/tasksched.git",
   "dependencies": {
-    "elm": "0.18.*"
+    "cors": "^2.8.4",
+    "elm": "0.18.*",
+    "express": "^4.16.2",
+    "express-http-proxy": "^1.1.0"
   }
 }
