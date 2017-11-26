@@ -5,7 +5,7 @@ ELM_MAKE = $(shell npm bin)/elm-make  # npm bin because then I don't require a g
 ELM_LIVE = elm-live                   # you should have it in PATH if you're an elm dev :-)
 ELMFLAGS =
 
-.PHONY: default help clean clean-gitignore live open
+.PHONY: default help clean clean-gitignore live
 
 default: help
 
@@ -19,7 +19,7 @@ run: $(OUTJS) server.js  ## Runs the server.
 # -- DEV TARGETS -- #
 
 live:  ## Runs an elm-live server for development. Proxied at /dev.
-	$(ELM_LIVE) $(MAIN) --output $(OUTJS)        -- $(ELMFLAGS)
+	$(ELM_LIVE) $(MAIN) --output $(OUTJS) -- $(ELMFLAGS)
 
 # -- THE TARGETS THAT ACTUALLY DO STUFF -- #
 
@@ -38,5 +38,5 @@ clean:  ## Cleans generated files
 
 clean-all: clean-gitignore  ## Cleans everything, including downloaded dependencies
 
-clean-gitignore:  ## Removes files listed in ./.gitignore
+clean-gitignore:  ## Removes all files listed in ./.gitignore
 	rm -rf $$(cat ./.gitignore | grep -v '^#')
