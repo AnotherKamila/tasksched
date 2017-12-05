@@ -46,11 +46,11 @@ const import_task = (task, {on_exit}) => {
     // Not using task import because it eats values not present in the imported data and we REALLY DON'T want that.
 
     if (!task.uuid || task.uuid.length != 36) return on_exit(0, "UUID not present or invalid")
-    let cmd = []
+    let cmd = [task.uuid, 'rc.recurrence.confirmation=no']
     if (task.done) {
-        cmd = [task.uuid, 'done']
+        cmd.push('done')
     } else {
-        cmd = [task.uuid, 'mod']
+        cmd.push('mod')
         for (var attr in task) if (task.hasOwnProperty(attr) && attr != 'uuid') cmd.push(attr+':'+(task[attr] || ''))
     }
     const tw = spawn(TASK, TASKOPTS.concat(cmd))
