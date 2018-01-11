@@ -32,7 +32,7 @@ header model =
         [ Button.link "#", Button.icon ]
         [ Icon.i "list" ]
     ]
-    |> Layout.row [Options.css "opacity" "0.2"]
+    |> Layout.row [Options.css "opacity" "0.6"]
 
 
 view_next : Model -> List (Html Msg)
