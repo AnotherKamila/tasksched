@@ -22,6 +22,14 @@ Requires `node` and `npm`.
 
 `make run` will install dependencies, build the app and run the server. Make sure that the `task` CLI is set up.
 
+## Vagrant
+Download the `Vagrantfile` and run `vagrant up`. Then
+```
+vagrant ssh
+su - tasks
+task add Stuff
+```
+
 ## How to get the best Chrome new tab page ever
 
 point this extension:
