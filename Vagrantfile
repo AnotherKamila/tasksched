@@ -8,7 +8,7 @@ Vagrant.configure("2") do |config|
   config.vm.box = "https://files.devuan.org/devuan_jessie/virtual/devuan_jessie_1.0.0_amd64_vagrant.box"
   config.ssh.username = 'root'
   config.ssh.password = 'toor'
-  config.ssh.forward_agent = true
+  config.ssh.forward_agent = false
   config.vm.guest = :debian
   config.vm.provider "virtualbox" do |vb|
     vb.memory = "512"
@@ -18,7 +18,7 @@ Vagrant.configure("2") do |config|
   config.vm.synced_folder ".", "/vagrant", disabled: true
   config.vm.define "tasksched" do |ansible|
     ansible.vm.network "forwarded_port", guest: 5000, host: 5000
-    ansible.vm.hostname = "tasksched"
+    ansible.vm.hostname = "tasksched-vm"
     ansible.vm.provision "shell", inline: <<-SHELL
 export DEBIAN_FRONTEND=noninteractive
 export DEBIAN_PRIORITY=critical
@@ -62,6 +62,7 @@ check process tasksched
     matching "node"
     start program = "/srv/tasksched.sh"
         as uid "tasks" and gid "tasks"
+    stop program = "/usr/bin/killall node"
     if failed host 127.0.0.1 port 5000 then restart
 MONIT
 # Reboot, we want those kernel patches
