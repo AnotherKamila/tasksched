@@ -14,7 +14,7 @@ It displays your next scheduled task, or the most urgent task if none are schedu
 
 This is meant to run "locally", i.e. it does not attempt to deal with authentication, taskserver, or anything. The server must be able to call the `task` CLI with your setup. Therefore, run it as your user, either locally, or on a server where you have set up task synchronization (behind HTTP auth or something).
 
-It does not communicate with taskserver as AFAIK there is no standardized HTTP API (let me know if I am wrong). Instead, the included small server translates HTTP calls to calls to the `task` CLI.
+It does not use taskserver as AFAIK there is no standardized HTTP API (let me know if I am wrong). Instead, the included small server translates HTTP calls to calls to the `task` CLI.
 
 # How to use
 
