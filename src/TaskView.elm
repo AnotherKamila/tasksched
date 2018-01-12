@@ -3,6 +3,7 @@ module TaskView exposing (..)
 import Date.Extra  as Date
 import Maybe.Extra as Maybe
 import Html exposing (..)
+import Html.Attributes exposing (href)
 import Date exposing (Date)
 import Html5.DragDrop as DragDrop
 import Material.Card as Card
@@ -16,13 +17,19 @@ import Utils.String exposing (emptyToList)
 view : (DragDrop.Msg Task (Maybe Date) -> m) -> Task -> Html m
 view dndMsg task =
     let options = [Color.text Color.white, css "padding" "0.5em"]
+        description = if task.task_url == "" then
+                 [ text task.description ]
+            else [ span [] [ a [ href task.task_url ] [ text "\x1f517" ]
+                   , text " ",
+                   text task.description
+                 ]]
     in (Card.view
             [ css "margin" "1em auto"
             , css "width" "90%"
             , Color.background Color.primary
             , Elevation.e2
             ]
-            [ Card.title options [text task.description]
+            [ Card.title options description
             , Card.text  options [text (task_details task)]
             ] )
     |> div (DragDrop.draggable dndMsg task) << List.singleton
