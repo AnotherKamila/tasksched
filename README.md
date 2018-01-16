@@ -4,6 +4,8 @@ An opinionated Taskwarrior web UI. Great for scheduling when to do your tasks.
 
 ![screenshot](./screenshots/big.png)
 
+Drag & drop tasks into the dates to schedule / re-schedule them (or drag them to the unscheduled part to unschedule).
+
 A pretty "next task" page is included:
 
 ![next tab page screenshot](./screenshots/nexttask.png)
