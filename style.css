@@ -33,3 +33,12 @@
     font-size: 2em;
     margin: 0.3em 0 0.6em 0;
 }
+.next-task h2 a, div.mdl-card a {
+    text-decoration: none;
+}
+
+.task-card a i {
+    font-size: 1em;
+    position: relative;
+    top: 2px;
+}

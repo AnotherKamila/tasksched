@@ -21,6 +21,7 @@ decode_task =
         |> Decode.optional "scheduled"   (Decode.map Just Decode.date) Nothing
         |> Decode.optional "due"         (Decode.map Just Decode.date) Nothing
         |> Decode.optional "project"     Decode.string ""
+        |> Decode.optional "task_url"    Decode.string ""
 
 decode_tasks : Decode.Decoder (List Task)
 decode_tasks = Decode.list decode_task

@@ -12,4 +12,5 @@ type alias Task =
     , scheduled   : Maybe Date.Date
     , due         : Maybe Date.Date
     , project     : String
+    , task_url    : String
     }
