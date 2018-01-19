@@ -9,8 +9,9 @@ import Material.Options  as Options
 import Taskwarrior.Model as Taskwarrior
 import Taskwarrior.Utils as Taskwarrior
 
-import Html  exposing (Html, text)
-import Model exposing (Model, Msg(..))
+import Html  exposing    (Html, text)
+import Model exposing    (Model, Msg(..))
+import TaskView exposing (pretty_task_description)
 
 background_url = "https://source.unsplash.com/daily?nature"
 
@@ -44,19 +45,8 @@ view_next model =
 pretty_task : Model -> Taskwarrior.Task -> List (Html Msg)
 pretty_task model t =
     [ text t.project
-    , pretty_task_description t
+    , Html.h2 [] [pretty_task_description t]
     , Button.render Mdl [10,1] model.mdl
         [ Button.fab, Button.ripple, Button.colored, Options.onClick (MarkDone t) ] -- TODO handle onClick
         [ Icon.i "done" ]
     ]
-
-pretty_task_description : Taskwarrior.Task -> Html Msg
-pretty_task_description t =
-    if t.task_url == "" then
-        Html.h2 [] [ text t.description ]
-    else
-        Html.h2 []
-            [ Html.a [ Html.href t.task_url ] [ text "\x1f517" ]
-              , text " ",
-              text t.description
-            ]
