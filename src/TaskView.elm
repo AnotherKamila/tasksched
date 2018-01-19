@@ -3,7 +3,7 @@ module TaskView exposing (..)
 import Date.Extra  as Date
 import Maybe.Extra as Maybe
 import Html exposing (..)
-import Html.Attributes as Html exposing (href)
+import Html.Attributes as Html
 import Date exposing (Date)
 import Html5.DragDrop as DragDrop
 import Material.Card as Card
