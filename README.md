@@ -20,7 +20,7 @@ It does not use taskserver as AFAIK there is no standardized HTTP API. Instead, 
 
 # How to use
 
-Requires `node` and `npm`.
+Requires `node` and `npm`. Install these using your distro's package manager.
 
 `make run` will install dependencies, build the app and run the server. That's all -- `make run`, open http://localhost:5000/ and enjoy :-)
 
