@@ -14,29 +14,34 @@ It displays your next scheduled task, or the most urgent task if none are schedu
 
 # Overview
 
-This is meant to run "locally", i.e. it does not attempt to deal with authentication, taskserver, or anything. The server must be able to call the `task` CLI with your setup. Therefore, run it as your user, either locally, or on a server where you have set up task synchronization (behind HTTP auth or something).
+This is meant to run "locally", i.e. it does not attempt to deal with authentication, taskserver, or anything. The app must be able to call the `task` CLI with your setup. Therefore, run it as your user, either locally, or on a server where you have set up task synchronization (make sure to put it behind HTTP auth or something if you allow access from the outside).
 
-It does not use taskserver as AFAIK there is no standardized HTTP API (let me know if I am wrong). Instead, the included small server translates HTTP calls to calls to the `task` CLI.
+It does not use taskserver as AFAIK there is no standardized HTTP API. Instead, the included small server translates HTTP calls to calls to the `task` CLI.
 
 # How to use
 
 Requires `node` and `npm`.
 
-`make run` will install dependencies, build the app and run the server. Make sure that the `task` CLI is set up.
+`make run` will install dependencies, build the app and run the server. That's all -- `make run`, open http://localhost:5000/ and enjoy :-)
 
-## Vagrant
-Download the `Vagrantfile` and run `vagrant up`. Then
+Make sure that the `task` CLI is set up and ready to use before using this.
+
+## Optional: Vagrant
+
+If you want to run this in a Vagrant VM, download the `Vagrantfile` and run `vagrant up`. Then
 ```
 vagrant ssh
 su - tasks
 task add Stuff
 ```
 
+Note that running it on your "normal" host, as your normal user, is more convenient and the recommended way. This is useful only if you cannot run it on your machine.
+
 ## How to get the best Chrome new tab page ever
 
 point this extension:
 https://chrome.google.com/webstore/detail/new-tab-url/njigpponciklokfkoddampoienefegcl/related
-to your "Next task page" URL (#next)
+to your "Next task page" URL (http://localhost:5000/#next)
 
 # Thanks to
 
