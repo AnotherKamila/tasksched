@@ -8,7 +8,7 @@ Drag & drop tasks into the dates to schedule / re-schedule them (or drag them to
 
 A pretty "next task" page is included:
 
-![next tab page screenshot](./screenshots/nexttask.png)
+![next task page screenshot](./screenshots/nexttask.png)
 
 It displays your next scheduled task, or the most urgent task if none are scheduled.
 
@@ -25,6 +25,10 @@ Requires `node` and `npm`. Install these using your distro's package manager.
 `make run` will install dependencies, build the app and run the server. That's all -- `make run`, open http://localhost:5000/ and enjoy :-)
 
 Make sure that the `task` CLI is set up and ready to use before using this.
+
+# Integration with [Timewarrior](https://taskwarrior.org/docs/timewarrior/)
+
+If you have the [Timewarrior hook](https://taskwarrior.org/docs/timewarrior/taskwarrior.html) installed (~/.task/hooks/on-modify.timewarrior), the Next Task page will show a start/pause button to encourage actually tracking time :-)
 
 ## Optional: Vagrant
 
