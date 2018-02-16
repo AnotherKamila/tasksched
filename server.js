@@ -16,14 +16,14 @@ const api = express()
 api.use(body_parser.json())
 api.use(cors({origin: DEVSERVER}))
 
-api.get('/', (req, res) => {
+api.get('/tasks', (req, res) => {
     export_tasks(req.query.filter, {
         on_data: (chunk) => res.write(chunk),
         on_exit: (c, s)  => res.end(c || s ? format_status(c, s) : '')
     })
 })
 
-api.post('/', (req, res) => {
+api.post('/tasks', (req, res) => {
     import_task(req.body, {on_exit: (c, s) => res.end(format_status(c, s))})
 })
 
@@ -42,17 +42,23 @@ const export_tasks = (filter, {on_data, on_exit}) => {
     tw.on('exit', on_exit)
 }
 
-const import_task = (task, {on_exit}) => {
+const import_task = ({command, task}, {on_exit}) => {
     // Not using task import because it eats values not present in the imported data and we REALLY DON'T want that.
 
     if (!task.uuid || task.uuid.length != 36) return on_exit(0, "UUID not present or invalid")
     let cmd = [task.uuid, 'rc.recurrence.confirmation=no']
-    if (task.done) {
-        cmd.push('done')
-    } else {
-        cmd.push('mod')
+
+    // Check command is in whitelist
+    if (!['mod', 'done', 'start', 'stop'].includes(command))
+        return on_exit(0, "Unsupported command");
+
+    cmd.push(command);
+
+    // Special case for modified attributes
+    if (command == 'mod') {
         for (var attr in task) if (task.hasOwnProperty(attr) && attr != 'uuid') cmd.push(attr+':'+(task[attr] || ''))
     }
+
     const tw = spawn(TASK, TASKOPTS.concat(cmd))
     console.log("[import] running command: task " + cmd.join(' '))
     tw.on('exit', on_exit)
