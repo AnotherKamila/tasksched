@@ -17,14 +17,16 @@ update msg model =
     case msg of
         -- TODO handle errors :D like, everywhere :D
         NewTasks  (Ok new)  -> ({model | tasks = new},                 Cmd.none)
-        SentTasks (Ok msg)  -> ({model | err   = msg},                 Cmd.none)
+        NewTimew  (Ok b)    -> ({model | timew = b},                   Cmd.none)
+        SentTasks (Ok msg)  -> ({model | err   = msg},                 refresh )
         NewTasks  (Err err) -> ({model | err   = toString err},        Cmd.none)
-        SentTasks (Err err) -> ({model | err   = toString err},        Cmd.none)
+        NewTimew  (Err err) -> ({model | err   = toString err},        Cmd.none)
+        SentTasks (Err err) -> ({model | err   = toString err},        refresh )
         NewNow    date      -> ({model | now   = date},                Cmd.none)
         NewZoom   zoom      -> ({model | zoom  = zoom},                Cmd.none)
         NewUrl    url       -> ({model | url   = url},                 Cmd.none)
+        SendCmd   cmd t     -> ( model,                                send_cmd cmd t)
         RefreshWanted       -> ( model,                                refresh )
-        MarkDone  t         -> ({model | tasks = Tw.rm t model.tasks}, send_done t)
         DragDropMsg m -> dropped m model
         Mdl         m -> Material.update Mdl m model -- Mdl action handler
 
@@ -41,17 +43,20 @@ dropped msg model =
 get_tasks : Cmd Msg
 get_tasks = Http.send NewTasks Tw.get_request
 
-send_task : Tw.Task -> Cmd Msg
-send_task t = Http.send SentTasks (Tw.send_request t)
-
-send_done : Tw.Task -> Cmd Msg
-send_done t = Http.send SentTasks (Tw.send_done_request t)
-
 get_now : Cmd Msg
 get_now = Task.perform NewNow Date.now
 
+get_timew : Cmd Msg
+get_timew = Http.send NewTimew Tw.get_timew_status
+
 refresh : Cmd Msg
-refresh = Cmd.batch [get_now, get_tasks]
+refresh = Cmd.batch [get_now, get_tasks, get_timew]
+
+send_cmd : Tw.TwCommand -> Tw.Task -> Cmd Msg
+send_cmd cmd t = Http.send SentTasks (Tw.send_request cmd t)
+
+send_task : Tw.Task -> Cmd Msg
+send_task t = send_cmd Tw.Modify t
 
 -- INIT --
 

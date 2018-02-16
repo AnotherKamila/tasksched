@@ -17,6 +17,7 @@ type alias Model =
     , now      : Date.Date
     , err      : String
     , url      : Navigation.Location
+    , timew    : Bool
     -- Boilerplate
     , dragDrop : DragDrop.Model Dragged DroppedOnto
     , mdl      : Material.Model -- for Mdl components
@@ -29,7 +30,8 @@ type Msg = NewTasks      (Result Http.Error (List Taskwarrior.Task))
          | NewZoom       Date.Interval
          | RefreshWanted
          | NewUrl        Navigation.Location
-         | MarkDone      Taskwarrior.Task
+         | NewTimew      (Result Http.Error Bool)
+         | SendCmd       Taskwarrior.TwCommand Taskwarrior.Task
          | DragDropMsg   (DragDrop.Msg Dragged DroppedOnto)
          -- Boilerplate
          | Mdl (Material.Msg Msg) -- internal Mdl messages
@@ -49,6 +51,7 @@ init location =
     , now      = Utils.Date.date_0
     , err      = ""
     , url      = location
+    , timew    = False
     -- Boilerplate
     , dragDrop = DragDrop.init
     , mdl      = Material.model

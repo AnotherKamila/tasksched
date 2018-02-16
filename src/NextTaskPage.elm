@@ -1,12 +1,14 @@
 module NextTaskPage exposing (view)
 
 import Navigation
+import Maybe.Extra       as Maybe
 import Html.Attributes   as Html
 import Material.Button   as Button
+import Material.Color    as Color
 import Material.Icon     as Icon
 import Material.Layout   as Layout
 import Material.Options  as Options
-import Taskwarrior.Model as Taskwarrior
+import Taskwarrior.Model as Taskwarrior exposing (TwCommand(..))
 import Taskwarrior.Utils as Taskwarrior
 
 import Html  exposing    (Html, text)
@@ -44,9 +46,17 @@ view_next model =
 
 pretty_task : Model -> Taskwarrior.Task -> List (Html Msg)
 pretty_task model t =
-    [ text t.project
-    , Html.h2 [] [pretty_task_description t]
-    , Button.render Mdl [10,1] model.mdl
-        [ Button.fab, Button.ripple, Button.colored, Options.onClick (MarkDone t) ] -- TODO handle onClick
-        [ Icon.i "done" ]
-    ]
+    let
+        (start_icon, cmd) = if Maybe.isJust t.started then ("pause", Stop) else ("play_arrow", Start)
+        start_button = Button.render Mdl [10,1] model.mdl
+            [ Button.fab, Button.minifab, Color.background Color.white, Options.onClick (SendCmd cmd t) ]
+            [ Icon.i start_icon ]
+        done_button = Button.render Mdl [10,2] model.mdl
+            [ Button.fab, Button.ripple, Button.colored, Options.onClick (SendCmd Done t) ]
+            [ Icon.i "done" ]
+    in
+        [ text t.project
+        , Html.h2 [] [pretty_task_description t]
+        ] ++
+        [done_button] ++
+        (if model.timew then [Html.br [] [], Html.br [] [], start_button] else [])

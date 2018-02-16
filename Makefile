@@ -18,7 +18,7 @@ run: $(OUTJS) server.js  ## Runs the server.
 
 # -- DEV TARGETS -- #
 
-live:  ## Runs an elm-live server for development. Proxied at /dev.
+live:  ## Runs an elm-live server for development. Use alongside the normal run target and access under /dev.
 	$(ELM_LIVE) $(MAIN) --output $(OUTJS) -- $(ELMFLAGS)
 
 # -- THE TARGETS THAT ACTUALLY DO STUFF -- #
