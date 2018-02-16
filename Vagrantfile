@@ -5,21 +5,20 @@
 # This is totally not an overkill
 #
 Vagrant.configure("2") do |config|
-  config.vm.box = "https://files.devuan.org/devuan_jessie/virtual/devuan_jessie_1.0.0_amd64_vagrant.box"
+  config.vm.box = "devuan"
+  config.vm.box_url = "https://files.devuan.org/devuan_jessie/virtual/devuan_jessie_1.0.0_amd64_vagrant.box"
   config.ssh.username = 'root'
-  config.ssh.password = 'toor'
   config.ssh.forward_agent = false
   config.vm.guest = :debian
   config.vm.provider "virtualbox" do |vb|
     vb.memory = "512"
   end
-  config.ssh.insert_key = false
   
   config.vm.synced_folder ".", "/vagrant", disabled: true
-  config.vm.define "tasksched" do |ansible|
-    ansible.vm.network "forwarded_port", guest: 5000, host: 5000
-    ansible.vm.hostname = "tasksched-vm"
-    ansible.vm.provision "shell", inline: <<-SHELL
+  config.vm.define "tasksched" do |tasksched|
+    tasksched.vm.network "forwarded_port", guest: 5000, host: 5000
+    tasksched.vm.hostname = "tasksched-vm"
+    tasksched.vm.provision "shell", inline: <<-SHELL
 export DEBIAN_FRONTEND=noninteractive
 export DEBIAN_PRIORITY=critical
 # Update keyring
