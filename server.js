@@ -5,6 +5,7 @@ const cors        = require('cors')
 const express     = require('express')
 const proxy       = require('express-http-proxy');
 const {spawn}     = require('child_process');
+const readline    = require('readline')
 
 const PORT          = process.env.PORT || 5000
 const TASK          = 'task'
@@ -73,6 +74,21 @@ const import_task = ({command, task}, {on_exit}) => {
 const format_status = (code, status) => `{"status": "${status || code || ''}"}`
 
 const check_timew = ({on_exit}) => {
-    let timew_present = true
-    on_exit(timew_present)
+    const tw = spawn(TASK, TASKOPTS.concat(['diagnostics']))
+    const rl = readline.createInterface({
+        input: tw.stdout
+    })
+
+    let response_sent = false
+
+    rl.on('line', (line) => {
+        if (line.includes('on-modify.timewarrior')) {
+            on_exit(true)
+            response_sent = true
+        }
+    })
+
+    rl.on('close', (line) => {
+	if (!response_sent) on_exit(false)
+    })
 }
