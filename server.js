@@ -27,6 +27,12 @@ api.post('/tasks', (req, res) => {
     import_task(req.body, {on_exit: (c, s) => res.end(format_status(c, s))})
 })
 
+api.get('/timew', (req, res) => {
+    check_timew({
+        on_exit: (timew_present) => res.json({enabled: timew_present})
+    })
+})
+
 const server = express()
 server.use(express.static('.'))
 server.use('/api', api)
@@ -65,3 +71,8 @@ const import_task = ({command, task}, {on_exit}) => {
 }
 
 const format_status = (code, status) => `{"status": "${status || code || ''}"}`
+
+const check_timew = ({on_exit}) => {
+    let timew_present = true
+    on_exit(timew_present)
+}
