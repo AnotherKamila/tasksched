@@ -15,8 +15,8 @@ import Material.Options as Options exposing (cs, css)
 import Taskwarrior.Model exposing (Task, Uuid)
 import Utils.String exposing (emptyToList)
 
-view : (DragDrop.Msg Task (Maybe Date) -> m) -> Task -> Html m
-view dndMsg task =
+view : (DragDrop.Msg Task (Maybe Date) -> m) -> Date -> Task -> Html m
+view dndMsg now task =
     let options = [cs "task-card", Color.text Color.white, css "padding" "0.5em"]
     in (Card.view
             [ css "margin" "1em auto"
@@ -25,16 +25,21 @@ view dndMsg task =
             , Elevation.e2
             ]
             [ Card.title options [pretty_task_description task]
-            , Card.text  options [text (task_details task)]
+            , Card.text  options [text (task_details now task)]
             ] )
     |> div (DragDrop.draggable dndMsg task) << List.singleton
 
 fmtdate : Date -> String
 fmtdate = Date.toFormattedString "MMM d"
 
-task_details : Task -> String
-task_details t =
-    let due  = Maybe.map (\x -> "due " ++ fmtdate x) t.due |> Maybe.toList
+task_details : Date -> Task -> String
+task_details now t =
+    let due  = Maybe.map (\x ->
+          if (Date.diff Date.Year now x) > 10 then
+            "due someday"
+          else
+            "due " ++ fmtdate x
+        ) t.due |> Maybe.toList
         proj = t.project |> emptyToList
     in due ++ proj |> String.join " • "
 
