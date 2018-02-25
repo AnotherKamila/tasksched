@@ -32,7 +32,7 @@ view : MyModel msg -> Html msg
 view model =
     let (sch, unsch) = Taskwarrior.partition_scheduled model.tasks
         (uns1, uns2) = unsch |> sortBy .urgency |> reverse |> List.splitAt ((length unsch)//2)
-        unsch_htmls  = [uns1, uns2] |> map (view_unscheduled model.dndMsg >> List.singleton >> cell [size All 4, css "margin" "0"])
+        unsch_htmls  = [uns1, uns2] |> map (view_unscheduled model.dndMsg model.now >> List.singleton >> cell [size All 4, css "margin" "0"])
         sch_html     = sch          |> view_scheduled model |> cell [size All 4]
     in grid [css "padding" "0"] (sch_html :: unsch_htmls)
 
@@ -60,5 +60,5 @@ make_buckets now interval =
 buckets : Date -> Date.Interval -> List Taskwarrior.Task -> List ((Date, Date), List Taskwarrior.Task)
 buckets now interval tasks = bucketize_by (in_bucket) (make_buckets now interval) tasks
 
-view_unscheduled : DndMsg msg -> List Taskwarrior.Task -> Html msg
-view_unscheduled dndMsg = map (TaskView.view dndMsg) >> div (DragDrop.droppable dndMsg Nothing)
+view_unscheduled : DndMsg msg -> Date -> List Taskwarrior.Task -> Html msg
+view_unscheduled dndMsg now = map (TaskView.view dndMsg now) >> div (DragDrop.droppable dndMsg Nothing)

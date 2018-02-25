@@ -22,7 +22,7 @@ view dndMsg active_drop now interval ((b, e), tasks) =
             Just (date) -> if date == b then [Color.background Color.accent] else []
     in
         Options.div ((css "min-height" "2em")::highlight)
-            (bucket_header now interval b :: (List.map (TaskView.view dndMsg) tasks))
+            (bucket_header now interval b :: (List.map (TaskView.view dndMsg now) tasks))
         |> List.singleton |> Html.div (DragDrop.droppable dndMsg (Just b))
 
 bucket_header : Date -> Interval -> Date -> Html msg
