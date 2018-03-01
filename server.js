@@ -11,6 +11,7 @@ const PORT          = process.env.PORT || 5000
 const TASK          = 'task'
 const TASKOPTS      = ['rc.gc=off']
 const DEVSERVER     = 'http://localhost:8000' // Proxies this from /dev (and allows CORS)
+const ALWAYS_FILTER = '(+PENDING or (+WAITING +SCHEDULED))'
 
 const api = express()
 api.use(body_parser.json())
@@ -69,7 +70,7 @@ const read_active_filter = ({on_filter}) => {
         })
         tw_filter.on('close', (line) => {
             // Execute callback with obtained filter
-            on_filter(filter)
+            on_filter('(' + filter + ')')
         })
     })
 }
@@ -88,6 +89,7 @@ const export_tasks = (filter, {on_data, on_exit}) => {
     let cmd = ['rc.json.array=on']
     if (filter)
         cmd.push(filter)
+    cmd.push(ALWAYS_FILTER)
     cmd.push('export')
     const tw = spawn_tw(cmd)
     tw.stdout.on('data', on_data)
