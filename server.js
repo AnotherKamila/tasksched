@@ -49,7 +49,7 @@ const export_filtered_tasks = (filter, callbacks) => {
 }
 
 const export_tasks = (filter, {on_data, on_exit}) => {
-    let f = `${filter || ''} ${ALWAYS_FILTER}`
+    const f = `${ALWAYS_FILTER} ${filter || ''}`
     const tw = spawn_tw([f, 'export'])
     tw.stdout.on('data', on_data)
     tw.on('exit', on_exit)
