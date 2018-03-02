@@ -9,7 +9,7 @@ const readline    = require('readline')
 
 const PORT          = process.env.PORT || 5000
 const TASK          = 'task'
-const TASKOPTS      = ['rc.gc=off']
+const TASKOPTS      = ['rc.gc=off', 'rc.json.array=on']
 const DEVSERVER     = 'http://localhost:8000' // Proxies this from /dev (and allows CORS)
 const ALWAYS_FILTER = '(+PENDING or (+WAITING +SCHEDULED))'
 
@@ -42,56 +42,15 @@ server.use('/dev', proxy(DEVSERVER))
 server.listen(PORT, () => console.log(`listening on port ${PORT}`))
 
 
-const read_active_filter = ({on_filter}) => {
-    // Step 1: See if there is an active context
-    const tw_context = readline.createInterface({
-        input: spawn_tw(['_get', 'rc.context']).stdout
-    })
-    let context = ''
-    tw_context.on('line', (line) => {
-        if (!context && line) context = line
-    })
-    tw_context.on('close', (line) => {
-        // Step 2: If there is an active context, get its filter.
-        //         If not, get the filter for the "next" report.
-        let cmd = ['_get']
-        if (context)
-            cmd.push('rc.context.' + context)
-        else
-            cmd.push('rc.report.next.filter')
-
-        const tw_filter = readline.createInterface({
-            input: spawn_tw(cmd).stdout
-        })
-
-        let filter = ''
-        tw_filter.on('line', (line) => {
-            if (!filter && line) filter = line
-        })
-        tw_filter.on('close', (line) => {
-            // Execute callback with obtained filter
-            on_filter('(' + filter + ')')
-        })
-    })
-}
-
-
 const export_filtered_tasks = (filter, callbacks) => {
-    // If a filter is already passed, don't bother checking taskwarrior's
-    if (filter)
-        return export_tasks(filter, callbacks)
-
-    read_active_filter({on_filter: (f) => export_tasks(f, callbacks)})
+    tw_active_filter({
+        on_exit: (f) => export_tasks(`${f} ${filter || ''}`, callbacks)
+    })
 }
-
 
 const export_tasks = (filter, {on_data, on_exit}) => {
-    let cmd = ['rc.json.array=on']
-    if (filter)
-        cmd.push(filter)
-    cmd.push(ALWAYS_FILTER)
-    cmd.push('export')
-    const tw = spawn_tw(cmd)
+    let f = `${filter || ''} ${ALWAYS_FILTER}`
+    const tw = spawn_tw([f, 'export'])
     tw.stdout.on('data', on_data)
     tw.on('exit', on_exit)
 }
@@ -135,11 +94,64 @@ const check_timew = ({on_exit}) => {
         }
     })
 
-    rl.on('close', (line) => {
+    rl.on('close', () => {
         if (!response_sent) on_exit(false)
     })
 }
 
 const spawn_tw = (opts) => {
     return spawn(TASK, TASKOPTS.concat(opts))
+}
+
+const tw_get = (dom, {on_exit}) => {
+    const tw = spawn_tw(['_get', dom]).stdout
+    let output = ''
+    tw.on('data', (data) => {
+        if (data) output += data.toString()
+    })
+    tw.on('close', () => {
+        on_exit(output.trim())
+    })
+}
+
+const tw_active_context = ({on_exit}) => {
+    // Get active context name
+    tw_get('rc.context', {on_exit})
+}
+
+const tw_context_filter = (context, {on_exit}) => {
+    // Get the filter associated with a given context
+
+    if (!context) on_exit('')
+
+    tw_get(`rc.context.${context}`, {
+        on_exit: (f) =>
+            on_exit((f) ? `(${f})` : '')
+    })
+}
+
+const tw_active_context_filter = ({on_exit}) => {
+    // Get active context filter
+    tw_active_context({
+        on_exit: (context) =>
+            tw_context_filter(context, {on_exit})
+    })
+}
+
+const tw_report_filter = (report, {on_exit}) => {
+    // Get the filter associated with a given report
+    tw_get(`rc.report.${report}.filter`, {
+        on_exit: (f) => on_exit((f) ? `(${f})` : '')
+    })
+}
+
+const tw_active_filter = ({on_exit}) => {
+    // Get the combination of:
+    // Current context filter AND next report filter
+    tw_report_filter('next', {
+        on_exit: (report_f) =>
+            tw_active_context_filter({
+                on_exit: (context_f) => on_exit(`${context_f} ${report_f}`)
+            })
+    })
 }
