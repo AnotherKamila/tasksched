@@ -122,7 +122,7 @@ const tw_active_context = ({on_exit}) => {
 const tw_context_filter = (context, {on_exit}) => {
     // Get the filter associated with a given context
 
-    if (!context) on_exit('')
+    if (!context) return on_exit('')
 
     tw_get(`rc.context.${context}`, {
         on_exit: (f) =>
