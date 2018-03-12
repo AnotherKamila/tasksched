@@ -47,6 +47,14 @@ point this extension:
 https://chrome.google.com/webstore/detail/new-tab-url/njigpponciklokfkoddampoienefegcl/related
 to your "Next task page" URL (http://localhost:5000/#next)
 
+# Like Tasksched?
+
+Send a pull request, motivate me, or become a patron!
+
+[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/anotherkamila/songbook-web/issues)
+[![Say Thanks!](https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg)](https://saythanks.io/to/AnotherKamila)
+[![Liberapay patrons](https://img.shields.io/liberapay/patrons/kamila.svg)](https://liberapay.com/kamila/donate)
+
 # Thanks to
 
 - built with [Elm](http://elm-lang.org/)
