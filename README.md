@@ -26,7 +26,7 @@ Requires `node` and `npm`. Install these using your distro's package manager.
 
 Make sure that the `task` CLI is set up and ready to use before using this.
 
-# Integration with [Timewarrior](https://taskwarrior.org/docs/timewarrior/)
+## Integration with [Timewarrior](https://taskwarrior.org/docs/timewarrior/)
 
 If you have the [Timewarrior hook](https://taskwarrior.org/docs/timewarrior/taskwarrior.html) installed (~/.task/hooks/on-modify.timewarrior), the Next Task page will show a start/pause button to encourage actually tracking time :-)
 
