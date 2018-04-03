@@ -32,7 +32,7 @@ If you have the [Timewarrior hook](https://taskwarrior.org/docs/timewarrior/task
 
 ## Task links
 
-If a task has the `task_url` attribute set, a clickable icon with that URL will be rendered. This is especially useful if you use something like [Bugwarrior](https://bugwarrior.readthedocs.io/) (together with a hook to add a unified `task_url` attribute instead of `$provider_url).
+If a task has the `task_url` attribute set, a clickable icon with that URL will be rendered. This is especially useful if you use something like [Bugwarrior](https://bugwarrior.readthedocs.io/) (together with a [hook to add a unified `task_url` attribute instead of `$provider_url`](https://github.com/AnotherKamila/tasksched/blob/master/contrib/taskwarrior-hooks/on-add.fix_task_url)).
 
 ## Optional: Vagrant
 
