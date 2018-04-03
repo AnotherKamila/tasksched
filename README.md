@@ -30,6 +30,10 @@ Make sure that the `task` CLI is set up and ready to use before using this.
 
 If you have the [Timewarrior hook](https://taskwarrior.org/docs/timewarrior/taskwarrior.html) installed (~/.task/hooks/on-modify.timewarrior), the Next Task page will show a start/pause button to encourage actually tracking time :-)
 
+## Task links
+
+If a task has the `task_url` attribute set, a clickable icon with that URL will be rendered. This is especially useful if you use something like [Bugwarrior](https://bugwarrior.readthedocs.io/) (together with a hook to add a unified `task_url` attribute instead of `$provider_url).
+
 ## Optional: Vagrant
 
 If you want to run this in a Vagrant VM, download the `Vagrantfile` and run `vagrant up`. Then
