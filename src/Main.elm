@@ -12,7 +12,7 @@ import Subscriptions
 program_init : Navigation.Location -> (Model.Model, Cmd Model.Msg)
 program_init location =
     let model = Model.init location
-    in (model, Update.refresh (url_state model))
+    in (model, Update.refresh (url_state model.url))
 
 main = Navigation.program Model.NewUrl
     { init   = program_init

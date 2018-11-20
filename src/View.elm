@@ -20,7 +20,7 @@ import TaskListViews
 
 view : Model -> Html.Html Msg
 view model =
-    let layout = if (url_state model).next then NextTaskPage.view model else
+    let layout = if (url_state model.url).next then NextTaskPage.view model else
         Material.Layout.render Mdl
             model.mdl
             [ Material.Layout.fixedDrawer, Material.Layout.fixedHeader ]

@@ -19,16 +19,16 @@ update msg model =
         -- TODO handle errors :D like, everywhere :D
         NewTasks  (Ok new)  -> ({model | tasks = new},                 Cmd.none)
         NewTimew  (Ok b)    -> ({model | timew = b},                   Cmd.none)
-        SentTasks (Ok msg)  -> ({model | err   = msg},                 refresh (url_state model))
+        SentTasks (Ok msg)  -> ({model | err   = msg},                 refresh (url_state model.url))
         NewTasks  (Err err) -> ({model | err   = toString err},        Cmd.none)
         NewTimew  (Err err) -> ({model | err   = toString err},        Cmd.none)
-        SentTasks (Err err) -> ({model | err   = toString err},        refresh (url_state model))
+        SentTasks (Err err) -> ({model | err   = toString err},        refresh (url_state model.url))
         NewNow    date      -> ({model | now   = date},                Cmd.none)
         NewZoom   zoom      -> ({model | zoom  = zoom},                Cmd.none)
         NewFilter f         -> ( model,                                update_filter model f)
-        NewUrl    url       -> ({model | url = url},                   refresh (url_state {model | url = url}))
+        NewUrl    url       -> ({model | url = url},                   refresh (url_state url))
         SendCmd   cmd t     -> ( model,                                send_cmd cmd t)
-        RefreshWanted       -> ( model,                                refresh (url_state model))
+        RefreshWanted       -> ( model,                                refresh (url_state model.url))
         ToggleNext          -> ( model,                                toggle_next model)
         DragDropMsg m       ->   dropped m model
         Mdl         m       ->   Material.update Mdl m model -- Mdl action handler
