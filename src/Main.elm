@@ -8,8 +8,13 @@ import Update
 import View
 import Subscriptions
 
+program_init : Navigation.Location -> (Model.Model, Cmd Model.Msg)
+program_init location =
+    let model = Model.init location
+    in (model, Update.refresh model)
+
 main = Navigation.program Model.NewUrl
-    { init   = \location -> (Model.init location, Update.init)
+    { init   = program_init
     , update = Update.update
     , view   = View.view
     , subscriptions = Subscriptions.subscriptions

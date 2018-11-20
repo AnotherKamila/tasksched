@@ -49,8 +49,12 @@ encode_with_cmd t cmd = Encode.object [ ("task",    encode_task t)
 tasks_url = Config.api_url ++ "/tasks"
 timew_url = Config.api_url ++ "/timew"
 
-get_request : Http.Request (List Task)
-get_request = Http.get tasks_url decode_tasks
+get_request : String -> Http.Request (List Task)
+get_request filter =
+    let url = String.join ""
+              (tasks_url :: (if String.isEmpty filter then [] else ["?filter=", filter]))
+    in
+        Http.get url decode_tasks
 
 send_request : TwCommand -> Task -> Http.Request String
 send_request cmd t = Http.post tasks_url

@@ -1,4 +1,4 @@
-module Update exposing (update, init)
+module Update exposing (update, refresh)
 
 import Date
 import Material
@@ -18,15 +18,15 @@ update msg model =
         -- TODO handle errors :D like, everywhere :D
         NewTasks  (Ok new)  -> ({model | tasks = new},                 Cmd.none)
         NewTimew  (Ok b)    -> ({model | timew = b},                   Cmd.none)
-        SentTasks (Ok msg)  -> ({model | err   = msg},                 refresh )
+        SentTasks (Ok msg)  -> ({model | err   = msg},                 refresh model)
         NewTasks  (Err err) -> ({model | err   = toString err},        Cmd.none)
         NewTimew  (Err err) -> ({model | err   = toString err},        Cmd.none)
-        SentTasks (Err err) -> ({model | err   = toString err},        refresh )
+        SentTasks (Err err) -> ({model | err   = toString err},        refresh model)
         NewNow    date      -> ({model | now   = date},                Cmd.none)
         NewZoom   zoom      -> ({model | zoom  = zoom},                Cmd.none)
         NewUrl    url       -> ({model | url   = url},                 Cmd.none)
         SendCmd   cmd t     -> ( model,                                send_cmd cmd t)
-        RefreshWanted       -> ( model,                                refresh )
+        RefreshWanted       -> ( model,                                refresh model)
         DragDropMsg m -> dropped m model
         Mdl         m -> Material.update Mdl m model -- Mdl action handler
 
@@ -40,8 +40,8 @@ dropped msg model =
 
 -- COMMANDS --
 
-get_tasks : Cmd Msg
-get_tasks = Http.send NewTasks Tw.get_request
+get_tasks : Model -> Cmd Msg
+get_tasks model = Http.send NewTasks (Tw.get_request model.urlState.filter)
 
 get_now : Cmd Msg
 get_now = Task.perform NewNow Date.now
@@ -49,16 +49,11 @@ get_now = Task.perform NewNow Date.now
 get_timew : Cmd Msg
 get_timew = Http.send NewTimew Tw.get_timew_status
 
-refresh : Cmd Msg
-refresh = Cmd.batch [get_now, get_tasks, get_timew]
+refresh : Model -> Cmd Msg
+refresh model = Cmd.batch [get_now, get_tasks model, get_timew]
 
 send_cmd : Tw.TwCommand -> Tw.Task -> Cmd Msg
 send_cmd cmd t = Http.send SentTasks (Tw.send_request cmd t)
 
 send_task : Tw.Task -> Cmd Msg
 send_task t = send_cmd Tw.Modify t
-
--- INIT --
-
-init : Cmd Msg
-init = refresh
