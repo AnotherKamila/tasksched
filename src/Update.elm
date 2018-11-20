@@ -6,7 +6,7 @@ import Task
 import Http
 import Html5.DragDrop as DragDrop
 
-import Model exposing (Model, Msg(..))
+import Model exposing (Model, Msg(..), parse_hash, update_filter, toggle_next)
 import Taskwarrior.Model as Tw
 import Taskwarrior.Api   as Tw
 import Taskwarrior.Utils as Tw
@@ -16,18 +16,19 @@ update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
     case msg of
         -- TODO handle errors :D like, everywhere :D
-        NewTasks  (Ok new)  -> ({model | tasks = new},                 Cmd.none)
-        NewTimew  (Ok b)    -> ({model | timew = b},                   Cmd.none)
-        SentTasks (Ok msg)  -> ({model | err   = msg},                 refresh model)
-        NewTasks  (Err err) -> ({model | err   = toString err},        Cmd.none)
-        NewTimew  (Err err) -> ({model | err   = toString err},        Cmd.none)
-        SentTasks (Err err) -> ({model | err   = toString err},        refresh model)
-        NewNow    date      -> ({model | now   = date},                Cmd.none)
-        NewZoom   zoom      -> ({model | zoom  = zoom},                Cmd.none)
-        NewFilter f         -> (model,                 Cmd.none) -- TODO
-        NewUrl    url       -> ({model | url   = url},                 Cmd.none)
-        SendCmd   cmd t     -> ( model,                                send_cmd cmd t)
-        RefreshWanted       -> ( model,                                refresh model)
+        NewTasks  (Ok new)  -> ({model | tasks = new},                    Cmd.none)
+        NewTimew  (Ok b)    -> ({model | timew = b},                      Cmd.none)
+        SentTasks (Ok msg)  -> ({model | err   = msg},                    refresh model)
+        NewTasks  (Err err) -> ({model | err   = toString err},           Cmd.none)
+        NewTimew  (Err err) -> ({model | err   = toString err},           Cmd.none)
+        SentTasks (Err err) -> ({model | err   = toString err},           refresh model)
+        NewNow    date      -> ({model | now   = date},                   Cmd.none)
+        NewZoom   zoom      -> ({model | zoom  = zoom},                   Cmd.none)
+        NewFilter f         -> (model,                                    update_filter model f)
+        NewUrl    url       -> ({model | urlState = parse_hash url.hash}, refresh model)
+        SendCmd   cmd t     -> ( model,                                   send_cmd cmd t)
+        RefreshWanted       -> ( model,                                   refresh model)
+        ToggleNext          -> ( model,                                   toggle_next model)
         DragDropMsg m -> dropped m model
         Mdl         m -> Material.update Mdl m model -- Mdl action handler
 

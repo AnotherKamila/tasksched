@@ -12,7 +12,7 @@ import Taskwarrior.Model as Taskwarrior exposing (TwCommand(..))
 import Taskwarrior.Utils as Taskwarrior
 
 import Html  exposing    (Html, text)
-import Model exposing    (Model, Msg(..))
+import Model exposing    (Model, Msg(..), toggle_next)
 import TaskView exposing (pretty_task_description)
 
 background_url = "https://source.unsplash.com/daily?nature"
@@ -32,7 +32,7 @@ header : Model -> Html Msg
 header model =
     [ Layout.spacer
     , Button.render Mdl [10,0] model.mdl
-        [ Button.link "#", Button.icon ]
+        [ Options.onClick ToggleNext, Button.icon ]
         [ Icon.i "list" ]
     ]
     |> Layout.row [Options.css "opacity" "0.6"]

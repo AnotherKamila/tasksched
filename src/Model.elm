@@ -1,4 +1,4 @@
-module Model exposing (Model, Msg(..), init)
+module Model exposing (Model, Msg(..), init, update_filter, parse_hash, toggle_next)
 
 import Date
 import Http
@@ -20,7 +20,6 @@ type alias Model =
     , zoom     : Date.Interval
     , now      : Date.Date
     , err      : String
-    , url      : Navigation.Location
     , urlState : UrlState
     , timew    : Bool
     -- Boilerplate
@@ -38,6 +37,7 @@ type Msg = NewTasks      (Result Http.Error (List Taskwarrior.Task))
          | NewUrl        Navigation.Location
          | NewTimew      (Result Http.Error Bool)
          | SendCmd       Taskwarrior.TwCommand Taskwarrior.Task
+         | ToggleNext
          | DragDropMsg   (DragDrop.Msg Dragged DroppedOnto)
          -- Boilerplate
          | Mdl (Material.Msg Msg) -- internal Mdl messages
@@ -57,10 +57,9 @@ parse_hash hash =
     in
       UrlState next filter
 
-put_hash : Model -> Cmd msg
-put_hash model =
-    let urlState = model.urlState
-        hash = String.join ""
+put_hash : UrlState -> Cmd msg
+put_hash urlState =
+    let hash = String.join ""
                [ "#"
                , (if urlState.next then "next" else "")
                , (if String.isEmpty urlState.filter then "" else "?")
@@ -68,6 +67,16 @@ put_hash model =
                ]
     in
         Navigation.modifyUrl hash
+
+update_filter : Model -> String -> Cmd Msg
+update_filter model f =
+    let urlState = model.urlState
+    in put_hash {urlState | filter = f}
+
+toggle_next : Model -> Cmd Msg
+toggle_next model =
+    let urlState = model.urlState
+    in put_hash {urlState | next = not urlState.next}
 
 -- INIT --
 
@@ -77,7 +86,6 @@ init location =
     , zoom     = Date.Day
     , now      = Utils.Date.date_0
     , err      = ""
-    , url      = location
     , urlState = parse_hash location.hash
     , timew    = False
     -- Boilerplate

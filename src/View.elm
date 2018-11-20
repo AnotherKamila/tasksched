@@ -19,7 +19,7 @@ import TaskListViews
 
 view : Model -> Html.Html Msg
 view model =
-    let layout = if model.url.hash == "#next" then NextTaskPage.view model else
+    let layout = if model.urlState.next then NextTaskPage.view model else
         Material.Layout.render Mdl
             model.mdl
             [ Material.Layout.fixedDrawer, Material.Layout.fixedHeader ]
@@ -86,7 +86,10 @@ drawer model =
     let zoom_is_active z = if model.zoom == z then active else [Material.Options.nop]
         zoomlink z       = mlink (NewZoom z) (zoom_name z) (zoom_is_active z)
         zooms_nav        = zooms |> List.map zoomlink
-        bottom           = [ Material.Layout.link [ Material.Layout.href "#next" ] [ text "Next task page" ] ]
+        bottom           = [ Material.Layout.link
+                                 [ Material.Options.onClick ToggleNext ]
+                                 [ text "Next task page" ]
+                           ]
     in
         [ Material.Layout.title [] [text "Tasks"]
         , divider [css "margin" "-1px 0"] []
