@@ -24,13 +24,13 @@ update msg model =
         SentTasks (Err err) -> ({model | err   = toString err},           refresh model)
         NewNow    date      -> ({model | now   = date},                   Cmd.none)
         NewZoom   zoom      -> ({model | zoom  = zoom},                   Cmd.none)
-        NewFilter f         -> (model,                                    update_filter model f)
+        NewFilter f         -> ( model,                                   update_filter model f)
         NewUrl    url       -> ({model | urlState = parse_hash url.hash}, refresh model)
         SendCmd   cmd t     -> ( model,                                   send_cmd cmd t)
         RefreshWanted       -> ( model,                                   refresh model)
         ToggleNext          -> ( model,                                   toggle_next model)
-        DragDropMsg m -> dropped m model
-        Mdl         m -> Material.update Mdl m model -- Mdl action handler
+        DragDropMsg m       ->   dropped m model
+        Mdl         m       ->   Material.update Mdl m model -- Mdl action handler
 
 dropped : DragDrop.Msg Tw.Task (Maybe Date.Date) -> Model -> (Model, Cmd Msg)
 dropped msg model =
