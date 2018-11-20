@@ -34,6 +34,7 @@ type Msg = NewTasks      (Result Http.Error (List Taskwarrior.Task))
          | NewNow        Date.Date
          | NewZoom       Date.Interval
          | RefreshWanted
+         | NewFilter     String
          | NewUrl        Navigation.Location
          | NewTimew      (Result Http.Error Bool)
          | SendCmd       Taskwarrior.TwCommand Taskwarrior.Task
