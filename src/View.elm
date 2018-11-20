@@ -14,12 +14,13 @@ import Html.Attributes  as Html
 import Material.Options exposing (cs, css, div, onClick)
 
 import Model exposing (Model, Msg(..))
+import UrlState exposing (url_state)
 import NextTaskPage
 import TaskListViews
 
 view : Model -> Html.Html Msg
 view model =
-    let layout = if model.urlState.next then NextTaskPage.view model else
+    let layout = if (url_state model).next then NextTaskPage.view model else
         Material.Layout.render Mdl
             model.mdl
             [ Material.Layout.fixedDrawer, Material.Layout.fixedHeader ]

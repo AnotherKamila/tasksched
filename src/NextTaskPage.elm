@@ -12,7 +12,8 @@ import Taskwarrior.Model as Taskwarrior exposing (TwCommand(..))
 import Taskwarrior.Utils as Taskwarrior
 
 import Html  exposing    (Html, text)
-import Model exposing    (Model, Msg(..), toggle_next)
+import Model exposing    (Model, Msg(..))
+import UrlState exposing (toggle_next)
 import TaskView exposing (pretty_task_description)
 
 background_url = "https://source.unsplash.com/daily?nature"
