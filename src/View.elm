@@ -3,6 +3,7 @@ module View exposing (view)
 import Material.Button
 import Material.Layout
 import Material.Scheme
+import Material.Textfield
 import Date.Extra       as Date
 import Maybe.Extra      as Maybe
 import Material.Color   as Color
@@ -51,9 +52,20 @@ header model =
     [ Material.Layout.row [] (
             [ Material.Layout.title [] [Html.text ("Tasks by " ++ zoom_name model.zoom)]
             , Material.Layout.spacer
+            , filterfield model
             ] ++ (rightbuttons model)
         )
     ]
+
+filterfield model =
+    Material.Textfield.render Mdl [2,1] model.mdl
+        [ Material.Textfield.label "Filter"
+        , Material.Options.onInput NewFilter
+        , Material.Textfield.expandable "id-of-expandable-1"
+        , Material.Textfield.expandableIcon "search"
+        , Material.Textfield.floatingLabel
+        ]
+        []
 
 rightbuttons model =
     [ Material.Button.render Mdl [1,0] model.mdl

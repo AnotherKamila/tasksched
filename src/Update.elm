@@ -24,6 +24,7 @@ update msg model =
         SentTasks (Err err) -> ({model | err   = toString err},        refresh )
         NewNow    date      -> ({model | now   = date},                Cmd.none)
         NewZoom   zoom      -> ({model | zoom  = zoom},                Cmd.none)
+        NewFilter f         -> (model,                 Cmd.none) -- TODO
         NewUrl    url       -> ({model | url   = url},                 Cmd.none)
         SendCmd   cmd t     -> ( model,                                send_cmd cmd t)
         RefreshWanted       -> ( model,                                refresh )
