@@ -43,11 +43,9 @@ dropped msg model =
 
 new_tasks_model : Model -> Tw.TaskListResponse -> Model
 new_tasks_model model new =
-    let filter = Maybe.withDefault "" (Http.decodeUri (url_state model.url).filter)
-    in
-        if filter == new.filter then
-            {model | tasks = new.tasks}
-        else model
+    if (url_state model.url).filter == new.filter then
+        {model | tasks = new.tasks}
+    else model
 
 -- COMMANDS --
 

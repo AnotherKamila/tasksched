@@ -54,7 +54,8 @@ timew_url = Config.api_url ++ "/timew"
 get_request : String -> Http.Request TaskListResponse
 get_request filter =
     let url = String.join ""
-              (tasks_url :: (if String.isEmpty filter then [] else ["?filter=", filter]))
+              (tasks_url :: (if String.isEmpty filter then []
+                             else ["?filter=", Http.encodeUri filter]))
     in
         Http.get url decode_tasks
 

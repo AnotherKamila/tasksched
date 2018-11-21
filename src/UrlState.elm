@@ -16,7 +16,7 @@ parse_hash hash =
     let next         = (String.startsWith "#next" hash)
         filter_parts = (Maybe.withDefault []
                             (List.tail (String.split "?" hash)))
-        filter = (String.join "?" filter_parts)
+        filter = Maybe.withDefault "" (Http.decodeUri (String.join "?" filter_parts))
     in
       UrlState next filter
 
