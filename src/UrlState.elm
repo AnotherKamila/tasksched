@@ -3,6 +3,7 @@ module UrlState exposing (UrlState, url_state, update_filter, toggle_next)
 import Model exposing (Model, Msg)
 
 import Navigation exposing (Location)
+import Http
 
 
 type alias UrlState =
@@ -24,11 +25,12 @@ url_state url = parse_hash url.hash
 
 put_hash : UrlState -> Cmd msg
 put_hash urlState =
-    let hash = String.join ""
+    let filter = Http.encodeUri urlState.filter
+        hash = String.join ""
                [ "#"
                , (if urlState.next then "next" else "")
-               , (if String.isEmpty urlState.filter then "" else "?")
-               , urlState.filter
+               , (if String.isEmpty filter then "" else "?")
+               , filter
                ]
     in
         Navigation.modifyUrl hash

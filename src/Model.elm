@@ -24,7 +24,7 @@ type alias Model =
     }
 
 
-type Msg = NewTasks      (Result Http.Error (List Taskwarrior.Task))
+type Msg = NewTasks      (Result Http.Error Taskwarrior.TaskListResponse)
          | SentTasks     (Result Http.Error String)
          | NewNow        Date.Date
          | NewZoom       Date.Interval

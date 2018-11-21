@@ -17,7 +17,7 @@ update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
     case msg of
         -- TODO handle errors :D like, everywhere :D
-        NewTasks  (Ok new)  -> ({model | tasks = new},                 Cmd.none)
+        NewTasks  (Ok new)  -> (new_tasks_model model new,             Cmd.none)
         NewTimew  (Ok b)    -> ({model | timew = b},                   Cmd.none)
         SentTasks (Ok msg)  -> ({model | err   = msg},                 refresh (url_state model.url))
         NewTasks  (Err err) -> ({model | err   = toString err},        Cmd.none)
@@ -40,6 +40,14 @@ dropped msg model =
             Nothing     -> (model.tasks, Cmd.none)
             Just (t, d) -> let new = {t | scheduled = d} in (Tw.mod new model.tasks, send_task new)
     in ({model | dragDrop = dragdrop, tasks = new_tasks}, cmd)
+
+new_tasks_model : Model -> Tw.TaskListResponse -> Model
+new_tasks_model model new =
+    let filter = Maybe.withDefault "" (Http.decodeUri (url_state model.url).filter)
+    in
+        if filter == new.filter then
+            {model | tasks = new.tasks}
+        else model
 
 -- COMMANDS --
 
