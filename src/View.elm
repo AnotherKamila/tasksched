@@ -62,7 +62,7 @@ filterfield model =
     Material.Textfield.render Mdl [2,1] model.mdl
         [ Material.Textfield.label "Filter"
         , Material.Options.onInput NewFilter
-        , Material.Textfield.expandable "id-of-expandable-1"
+        , Material.Textfield.expandable "main-search-expandable"
         , Material.Textfield.expandableIcon "search"
         , Material.Textfield.floatingLabel
         ]
