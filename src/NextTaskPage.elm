@@ -32,7 +32,7 @@ header : Model -> Html Msg
 header model =
     [ Layout.spacer
     , Button.render Mdl [10,0] model.mdl
-        [ Button.link "#", Button.icon ]
+        [ Options.onClick ToggleNext, Button.icon ]
         [ Icon.i "list" ]
     ]
     |> Layout.row [Options.css "opacity" "0.6"]

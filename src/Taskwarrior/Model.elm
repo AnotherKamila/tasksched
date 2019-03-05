@@ -1,4 +1,4 @@
-module Taskwarrior.Model exposing (Uuid, Task, TwCommand(..))
+module Taskwarrior.Model exposing (Uuid, Task, TaskListResponse, TwCommand(..))
 
 import Date
 
@@ -14,6 +14,11 @@ type alias Task =
     , started     : Maybe Date.Date
     , project     : String
     , task_url    : String
+    }
+
+type alias TaskListResponse =
+    { filter: String
+    , tasks: (List Task)
     }
 
 type TwCommand = Modify | Done | Start | Stop

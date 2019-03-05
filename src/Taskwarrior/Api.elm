@@ -1,5 +1,4 @@
-module Taskwarrior.Api exposing (decode_task, decode_tasks, encode_task, encode_with_cmd,
-                                 get_request, send_request, get_timew_status)
+module Taskwarrior.Api exposing (get_request, send_request, get_timew_status)
 
 import Http
 import Json.Decode          as Decode
@@ -10,7 +9,7 @@ import Json.Encode.Extra    as Encode
 import Config
 import Utils.Json.Decode    as Decode
 import Utils.Json.Encode    as Encode
-import Taskwarrior.Model exposing (Task, TwCommand(..))
+import Taskwarrior.Model exposing (Task, TaskListResponse, TwCommand(..))
 
 decode_task : Decode.Decoder Task
 decode_task =
@@ -25,8 +24,11 @@ decode_task =
         |> Decode.optional "project"     Decode.string ""
         |> Decode.optional "task_url"    Decode.string ""
 
-decode_tasks : Decode.Decoder (List Task)
-decode_tasks = Decode.list decode_task
+decode_tasks : Decode.Decoder TaskListResponse
+decode_tasks =
+    Decode.decode TaskListResponse
+        |> Decode.optional "filter"  Decode.string ""
+        |> Decode.required "tasks"  (Decode.list  decode_task)
 
 encode_task : Task -> Encode.Value
 encode_task t = Encode.object [ ("uuid",      Encode.string                    t.uuid     )
@@ -49,8 +51,13 @@ encode_with_cmd t cmd = Encode.object [ ("task",    encode_task t)
 tasks_url = Config.api_url ++ "/tasks"
 timew_url = Config.api_url ++ "/timew"
 
-get_request : Http.Request (List Task)
-get_request = Http.get tasks_url decode_tasks
+get_request : String -> Http.Request TaskListResponse
+get_request filter =
+    let url = String.join ""
+              (tasks_url :: (if String.isEmpty filter then []
+                             else ["?filter=", Http.encodeUri filter]))
+    in
+        Http.get url decode_tasks
 
 send_request : TwCommand -> Task -> Http.Request String
 send_request cmd t = Http.post tasks_url

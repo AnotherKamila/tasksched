@@ -3,6 +3,7 @@ module View exposing (view)
 import Material.Button
 import Material.Layout
 import Material.Scheme
+import Material.Textfield
 import Date.Extra       as Date
 import Maybe.Extra      as Maybe
 import Material.Color   as Color
@@ -13,12 +14,13 @@ import Html.Attributes  as Html
 import Material.Options exposing (cs, css, div, onClick)
 
 import Model exposing (Model, Msg(..))
+import UrlState exposing (url_state)
 import NextTaskPage
 import TaskListViews
 
 view : Model -> Html.Html Msg
 view model =
-    let layout = if model.url.hash == "#next" then NextTaskPage.view model else
+    let layout = if (url_state model.url).next then NextTaskPage.view model else
         Material.Layout.render Mdl
             model.mdl
             [ Material.Layout.fixedDrawer, Material.Layout.fixedHeader ]
@@ -51,9 +53,20 @@ header model =
     [ Material.Layout.row [] (
             [ Material.Layout.title [] [Html.text ("Tasks by " ++ zoom_name model.zoom)]
             , Material.Layout.spacer
+            , filterfield model
             ] ++ (rightbuttons model)
         )
     ]
+
+filterfield model =
+    Material.Textfield.render Mdl [2,1] model.mdl
+        [ Material.Textfield.label "Filter"
+        , Material.Options.onInput NewFilter
+        , Material.Textfield.expandable "main-search-expandable"
+        , Material.Textfield.expandableIcon "search"
+        , Material.Textfield.floatingLabel
+        ]
+        []
 
 rightbuttons model =
     [ Material.Button.render Mdl [1,0] model.mdl
@@ -74,7 +87,10 @@ drawer model =
     let zoom_is_active z = if model.zoom == z then active else [Material.Options.nop]
         zoomlink z       = mlink (NewZoom z) (zoom_name z) (zoom_is_active z)
         zooms_nav        = zooms |> List.map zoomlink
-        bottom           = [ Material.Layout.link [ Material.Layout.href "#next" ] [ text "Next task page" ] ]
+        bottom           = [ Material.Layout.link
+                                 [ Material.Options.onClick ToggleNext ]
+                                 [ text "Next task page" ]
+                           ]
     in
         [ Material.Layout.title [] [text "Tasks"]
         , divider [css "margin" "-1px 0"] []

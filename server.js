@@ -18,9 +18,17 @@ api.use(body_parser.json())
 api.use(cors({origin: DEVSERVER}))
 
 api.get('/tasks', (req, res) => {
-    export_filtered_tasks(req.query.filter, {
+    let filter = req.query.filter
+    // This bit is terrible.
+    // But the alternative is having everything again in memory.
+    let filter_s = (filter) ? ("\"filter\":\"" + filter + "\",") : ""
+    res.write("{" + filter_s + "\"tasks\":")
+    export_filtered_tasks(filter, {
         on_data: (chunk) => res.write(chunk),
-        on_exit: (c, s)  => res.end(c || s ? format_status(c, s) : '')
+        on_exit: (c, s)  => {
+            res.write("}") &&
+            res.end(c || s ? format_status(c, s) : '')
+        }
     })
 })
 
